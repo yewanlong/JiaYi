@@ -34,6 +34,8 @@ public class SerialPortActivity extends AppCompatActivity implements OnOpenSeria
             return;
         }
 
+        Log.i("ywl", "file:" + device.getFile().getPath());
+//        File f = new File(file);
         mSerialPortManager = new SerialPortManager();
         mSerialPortManager.setOnOpenSerialPortListener(this)
                 .setOnSerialPortDataListener(new OnSerialPortDataListener() {
