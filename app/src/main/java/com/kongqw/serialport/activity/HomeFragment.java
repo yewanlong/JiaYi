@@ -2,6 +2,7 @@ package com.kongqw.serialport.activity;
 
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,7 +22,7 @@ import java.util.List;
  * Created by Lkn on 2018/1/31.
  */
 
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends BaseFragment implements AdapterView.OnItemClickListener{
     private ImageCycleView cycleView;
     private GridView gridView;
     private HomeGridAdapter adapter;
@@ -75,11 +76,16 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     protected void initListener() {
-
+        gridView.setOnItemClickListener(this);
     }
 
     @Override
     protected boolean isApplyEventBus() {
         return false;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
     }
 }

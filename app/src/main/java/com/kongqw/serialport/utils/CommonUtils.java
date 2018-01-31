@@ -12,10 +12,15 @@ import android.net.Uri;
 import android.os.Environment;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 import java.util.Random;
 
 public class CommonUtils {
@@ -37,30 +42,58 @@ public class CommonUtils {
         return false;
     }
 
-
-    public static String getVersionName(Context context) {
-        PackageManager packageManager = context.getPackageManager();
-        // getPackageName()是你当前类的包名，0代表是获取版本信息
+    public static String getLocalMacAddressFromIp() {
+        String strMacAddr = null;
         try {
-            PackageInfo packInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-            String version = packInfo.versionName;
-            return version;
+            //获得IpD地址
+            InetAddress ip = getLocalInetAddress();
+            byte[] b = NetworkInterface.getByInetAddress(ip).getHardwareAddress();
+            StringBuffer buffer = new StringBuffer();
+            for (int i = 0; i < b.length; i++) {
+                if (i != 0) {
+                    buffer.append(':');
+                }
+                String str = Integer.toHexString(b[i] & 0xFF);
+                buffer.append(str.length() == 1 ? 0 + str : str);
+            }
+            strMacAddr = buffer.toString().toUpperCase();
         } catch (Exception e) {
-            e.printStackTrace();
-            return "";
+
         }
+
+        return strMacAddr;
     }
 
-    public static int getAppVersionCode(Context context) {
-        PackageManager pm = context.getPackageManager();
+    /**
+     * 获取移动设备本地IP
+     *
+     * @return
+     */
+    private static InetAddress getLocalInetAddress() {
+        InetAddress ip = null;
         try {
-            PackageInfo packinfo = pm.getPackageInfo(context.getPackageName(), 0);
-            int versionCode = packinfo.versionCode;
-            return versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
+            //列举
+            Enumeration<NetworkInterface> en_netInterface = NetworkInterface.getNetworkInterfaces();
+            while (en_netInterface.hasMoreElements()) {//是否还有元素
+                NetworkInterface ni = (NetworkInterface) en_netInterface.nextElement();//得到下一个元素
+                Enumeration<InetAddress> en_ip = ni.getInetAddresses();//得到一个ip地址的列举
+                while (en_ip.hasMoreElements()) {
+                    ip = en_ip.nextElement();
+                    if (!ip.isLoopbackAddress() && ip.getHostAddress().indexOf(":") == -1)
+                        break;
+                    else
+                        ip = null;
+                }
+
+                if (ip != null) {
+                    break;
+                }
+            }
+        } catch (SocketException e) {
+
             e.printStackTrace();
-            return -1;
         }
+        return ip;
     }
 
     /**
@@ -75,89 +108,5 @@ public class CommonUtils {
         return false;
     }
 
-
-    /**
-     * 保存图片
-     *
-     * @param bm
-     * @param fileName
-     * @throws IOException
-     */
-    public static String saveFile(Context content, Bitmap bm, String fileName) throws IOException {
-        final File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
-                + "BabyTalk" + File.separator + "images");
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-        File myCaptureFile = new File(folder.getAbsolutePath() + File.separator + fileName);
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(myCaptureFile));
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-        bos.flush();
-        bos.close();
-        Uri uri = Uri.fromFile(myCaptureFile);
-        Intent mIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
-        content.sendBroadcast(mIntent);
-        return myCaptureFile.getPath();
-    }
-
-    /**
-     * 判断文件是否存在
-     *
-     * @param fileName
-     * @return
-     */
-    public static boolean fileIsExists(String fileName) {
-        try {
-            File f = new File(fileName);
-            if (!f.exists()) {
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * 键盘操作
-     *
-     * @param context
-     * @param view
-     */
-    public static void showSoftInput(Context context, View view) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-    }
-
-    public static void hideSoftInput(Context context, View view) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0); //强制隐藏键盘
-    }
-
-    /**
-     * 生成随机编码
-     *
-     * @param length
-     * @return 表示生成字符串的长度
-     */
-    public static String getRandomString(int length) {
-        String base = "abcdefghijklmnopqrstuvwxyz0123456789";
-        Random random = new Random();
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < length; i++) {
-            int number = random.nextInt(base.length());
-            sb.append(base.charAt(number));
-        }
-        return sb.toString();
-    }
-
-    public static boolean isWifi(Context mContext) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
-        if (activeNetInfo != null && activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-            return true;
-        }
-        return false;
-    }
 
 }

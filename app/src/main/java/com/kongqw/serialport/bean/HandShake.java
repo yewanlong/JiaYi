@@ -5,6 +5,7 @@ import com.xuhao.android.libsocket.sdk.bean.ISendable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 /**
  * Created by xuhao on 2017/5/22.
@@ -15,6 +16,10 @@ public class HandShake implements ISendable {
 
     public HandShake(String content) {
         this.content = content;
+    }
+
+    public HandShake(Map<String, Object> content) {
+        this.content = content.toString();
     }
 
     @Override
