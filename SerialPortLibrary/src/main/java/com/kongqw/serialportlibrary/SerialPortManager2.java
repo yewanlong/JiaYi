@@ -41,7 +41,7 @@ public class SerialPortManager2 extends SerialPort {
      * @param baudRate 波特率
      * @return 打开是否成功
      */
-    public boolean openSerialPort(File device, int baudRate, int what) {
+    public boolean openSerialPort(File device, int baudRate) {
 
         Log.i(TAG, "openSerialPort: " + String.format("打开串口 %s  波特率 %s", device.getPath(), baudRate));
 
@@ -62,13 +62,13 @@ public class SerialPortManager2 extends SerialPort {
             mFileInputStream = new FileInputStream(mFd);
             mFileOutputStream = new FileOutputStream(mFd);
             Log.i(TAG, "openSerialPort: 串口已经打开 " + mFd);
-            if (null != mOnOpenSerialPortListener) {
-                mOnOpenSerialPortListener.onSuccess(device);
-            }
             // 开启发送消息的线程
             startSendThread();
             // 开启接收消息的线程
-            startReadThread(what);
+            startReadThread();
+            if (null != mOnOpenSerialPortListener) {
+                mOnOpenSerialPortListener.onSuccess(device);
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,12 +144,13 @@ public class SerialPortManager2 extends SerialPort {
         byte[] data = new byte[0];
         switch (what) {
             case Tool.SERIAL_TYPE_WHAT_1:
+            case Tool.SERIAL_TYPE_WHAT_3:
                 data = new byte[]{(byte) 1, (byte) type, (byte) 0, (byte) 3, (byte) 0, (byte) 0, (byte) 0,
                         (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
                 break;
             case Tool.SERIAL_TYPE_WHAT_5:
-                int number = map.get(Tool.MOTOR);
-                data = new byte[]{(byte) 1, (byte) type, (byte) number, (byte) 3, (byte) 0, (byte) 0, (byte) 0,
+                int number = map.get(Tool.MOTOR_NUMBER);
+                data = new byte[]{(byte) 1, (byte) type, (byte) 0, (byte) number, (byte) 0, (byte) 0, (byte) 0,
                         (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
                 break;
 
@@ -183,7 +184,7 @@ public class SerialPortManager2 extends SerialPort {
                     try {
                         mFileOutputStream.write(send_start);
                         if (null != mOnSerialPortDataListener) {
-                            Log.d("sum_command_start", "m_zhiling=" + m_zhiling);
+                            Log.d("ywl", "m_zhiling=" + m_zhiling);
                             mOnSerialPortDataListener.onDataSent(send_start, what);
                         }
                     } catch (Exception e) {
@@ -209,12 +210,12 @@ public class SerialPortManager2 extends SerialPort {
     /**
      * 开启接收消息的线程
      */
-    private void startReadThread(int what) {
-        mSerialPortReadThread = new SerialPortReadThread2(mFileInputStream, what) {
+    private void startReadThread() {
+        mSerialPortReadThread = new SerialPortReadThread2(mFileInputStream) {
             @Override
             public void onDataReceived(byte[] bytes, int what) {
                 if (null != mOnSerialPortDataListener) {
-                    mOnSerialPortDataListener.onDataReceived(bytes, what);
+                    mOnSerialPortDataListener.onDataReceived(bytes);
                 }
             }
         };

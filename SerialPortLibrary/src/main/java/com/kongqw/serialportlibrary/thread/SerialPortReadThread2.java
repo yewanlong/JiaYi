@@ -19,7 +19,7 @@ public abstract class SerialPortReadThread2 extends Thread {
     private byte[] mReadBuffer;
     private int what;
 
-    public SerialPortReadThread2(InputStream inputStream, int what) {
+    public SerialPortReadThread2(InputStream inputStream) {
         mInputStream = inputStream;
         this.what = what;
         mReadBuffer = new byte[1024];

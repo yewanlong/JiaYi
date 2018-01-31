@@ -6,7 +6,6 @@ import android.util.Log;
 
 public class Tool {
     //接收what
-    public final static int SERIAL_TYPE_WHAT_0 = 1000; //打开串口
     public final static int SERIAL_TYPE_WHAT_1 = 1001; //获取序列号
     public final static int SERIAL_TYPE_WHAT_3 = 1003; //电机
     public final static int SERIAL_TYPE_WHAT_5 = 1005; //电机
