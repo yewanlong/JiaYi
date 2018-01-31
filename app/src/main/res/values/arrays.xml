@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pins">
+        <item>gpio00</item>
+        <item>gpio01</item>
+        <item>gpio02</item>
+
+    </string-array>
+    <string-array name="modes">
+        <item>OUTPUT</item>
+        <item>INPUT</item>
+        <item>INPUT PULL UP</item>
+    </string-array>
+
+    <string-array name="states">
+        <item>HIGH</item>
+        <item>LOW</item>
+
+    </string-array>
+</resources>
