@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidSerialPort.iml" filepath="$PROJECT_DIR$/AndroidSerialPort.iml" />
       <module fileurl="file://D:\ASworkspace\JiaYi\AndroidSerialPort.iml" filepath="D:\ASworkspace\JiaYi\AndroidSerialPort.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/JiaYi.iml" filepath="$PROJECT_DIR$/.idea/JiaYi.iml" />
+      <module fileurl="file://D:\Android\AndroidSerialPort\.idea\JiaYi.iml" filepath="D:\Android\AndroidSerialPort\.idea\JiaYi.iml" />
       <module fileurl="file://$PROJECT_DIR$/SerialPortLibrary/SerialPortLibrary.iml" filepath="$PROJECT_DIR$/SerialPortLibrary/SerialPortLibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

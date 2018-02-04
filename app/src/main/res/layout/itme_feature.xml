@@ -2,32 +2,65 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:background="@drawable/shape_corner_10dp_solid_white"
-    android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:layout_height="110dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="10dp"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
         android:src="@mipmap/ic_launcher" />
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="95dp"
+        android:layout_marginLeft="5dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="可乐"
-        android:textColor="@color/text_color"
-        android:textSize="@dimen/font_size_18sp" />
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="可乐"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/font_size_20sp" />
 
-    <TextView
-        android:id="@+id/tv_money"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="￥3.00 "
-        android:textColor="@color/colorAccent"
-        android:textSize="@dimen/font_size_20sp" />
+        <TextView
+            android:id="@+id/tv_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="可乐"
+            android:textColor="@color/text_hint_color"
+            android:textSize="@dimen/font_size_18sp" />
+
+        <TextView
+            android:id="@+id/tv_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="￥3.00 "
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/font_size_20sp" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="20dp"
+            android:src="@mipmap/icon_add" />
+    </RelativeLayout>
+
 </LinearLayout>

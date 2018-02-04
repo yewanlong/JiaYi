@@ -15,7 +15,7 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 
 import com.kongqw.serialport.R;
-import com.kongqw.serialport.bean.AppLbts;
+import com.kongqw.serialport.bean.LunBoList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +112,7 @@ public class ImageCycleView extends LinearLayout {
      * @param :
      * @param imageCycleViewListener
      */
-    public void setImageResources(List<AppLbts> imageUrlList, ImageCycleViewListener imageCycleViewListener) {
+    public void setImageResources(List<LunBoList> imageUrlList, ImageCycleViewListener imageCycleViewListener) {
         if (imageUrlList != null && imageUrlList.size() > 0) {
             this.setVisibility(View.VISIBLE);
         } else {
@@ -239,7 +239,7 @@ public class ImageCycleView extends LinearLayout {
         /**
          * 图片资源列表
          */
-        private List<AppLbts> mAdList = new ArrayList<>();
+        private List<LunBoList> mAdList = new ArrayList<>();
 
         /**
          * 广告图片点击监听
@@ -248,7 +248,7 @@ public class ImageCycleView extends LinearLayout {
 
         private Context mContext;
 
-        public ImageCycleAdapter(Context context, List<AppLbts> adList, ImageCycleViewListener imageCycleViewListener) {
+        public ImageCycleAdapter(Context context, List<LunBoList> adList, ImageCycleViewListener imageCycleViewListener) {
             this.mContext = context;
             this.mAdList = adList;
             mImageCycleViewListener = imageCycleViewListener;
@@ -268,7 +268,7 @@ public class ImageCycleView extends LinearLayout {
 
         @Override
         public Object instantiateItem(ViewGroup container, final int position) {
-            String imageUrl = mAdList.get(position % mAdList.size()).getImage();
+            String imageUrl = mAdList.get(position % mAdList.size()).getImages();
             ColorFilterImageView imageView;
             if (mImageViewCacheList.isEmpty()) {
                 imageView = new ColorFilterImageView(mContext);

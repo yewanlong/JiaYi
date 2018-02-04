@@ -9,7 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kongqw.serialport.R;
-import com.kongqw.serialport.bean.HomeFeature;
+import com.kongqw.serialport.bean.HomeBean;
+import com.kongqw.serialport.bean.HomeListData;
+import com.kongqw.serialport.weight.OptionsUtils;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,18 +21,18 @@ import java.util.List;
  * Created by Lkn on 2017/4/1.
  */
 
-public class HomeGridAdapter extends BaseAdapter {
+public class HomeContentAdapter extends BaseAdapter {
     private Context context;
-    private List<HomeFeature> list = new ArrayList<>();
+    private List<HomeListData> list = new ArrayList<>();
 
 
-    public HomeGridAdapter(Context context) {
+    public HomeContentAdapter(Context context) {
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        return 17;
+        return list.size();
     }
 
     @Override
@@ -48,21 +51,28 @@ public class HomeGridAdapter extends BaseAdapter {
             holder = new ViewHolder();
             view = LayoutInflater.from(context).inflate(R.layout.itme_feature, parent, false);
             holder.imageView = (ImageView) view.findViewById(R.id.imageView);
-            holder.tv_content = (TextView) view.findViewById(R.id.tv_money);
+            holder.tv_title = (TextView) view.findViewById(R.id.tv_title);
+            holder.tv_number = (TextView) view.findViewById(R.id.tv_number);
+            holder.tv_money = (TextView) view.findViewById(R.id.tv_money);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
         }
+        holder.tv_title.setText(list.get(position).getTitle());
+        holder.tv_number.setText("剩余数量：" + list.get(position).getNum());
+        holder.tv_money.setText("￥" + list.get(position).getPrice());
+        ImageLoader.getInstance().displayImage(list.get(position).getImages(), holder.imageView, OptionsUtils.
+                options(R.mipmap.ic_friends_sends_pictures_no));
         return view;
     }
 
     public class ViewHolder {
-        TextView tv_content, tv_money;
+        TextView tv_title, tv_money, tv_number;
         ImageView imageView;
 
     }
 
-    public void setData(List<HomeFeature> list) {
+    public void setData(List<HomeListData> list) {
         if (list == null) {
             return;
         }
@@ -71,7 +81,7 @@ public class HomeGridAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public List<HomeFeature> getData() {
+    public List<HomeListData> getData() {
         return list;
     }
 }

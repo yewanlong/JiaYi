@@ -52,7 +52,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     private HomeFragment homeFragment;
     private SerialPortManager2 mSerialPortManager;
-    //    private Device device;
+    private Device device;
     private IConnectionManager mManager;
     private ConnectionInfo mInfo;
     private OkSocketOptions mOkOptions;
@@ -65,7 +65,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Override
     protected void initView() {
-//        device = (Device) getIntent().getSerializableExtra(SerialPortActivity.DEVICE);
+        device = (Device) getIntent().getSerializableExtra(SerialPortActivity.DEVICE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         homeFragment = new HomeFragment();
         mSerialPortManager = new SerialPortManager2();
@@ -91,25 +91,25 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         findViewById(R.id.btn_gpio).setOnClickListener(this);
         findViewById(R.id.btn_ck).setOnClickListener(this);
         findViewById(R.id.btn_gpio2).setOnClickListener(this);
-//        if (device != null) {
-        mSerialPortManager.setOnOpenSerialPortListener(this)
-                .setOnSerialPortDataListener(new OnSerialPortDataListener2() {
-                    @Override
-                    public void onDataReceived(final byte[] bytes) {
-                        Log.i("ywl", "接收到数据");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                switchReceived(bytes);
-                            }
-                        });
-                    }
+        if (device != null) {
+            mSerialPortManager.setOnOpenSerialPortListener(this)
+                    .setOnSerialPortDataListener(new OnSerialPortDataListener2() {
+                        @Override
+                        public void onDataReceived(final byte[] bytes) {
+                            Log.i("ywl", "接收到数据");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    switchReceived(bytes);
+                                }
+                            });
+                        }
 
-                    @Override
-                    public void onDataSent(final byte[] bytes, final int what) {
-                    }
-                }).openSerialPort(new File("/dev/ttyS1"), 9600);
-//        }
+                        @Override
+                        public void onDataSent(final byte[] bytes, final int what) {
+                        }
+                    }).openSerialPort(new File("/dev/ttyS1"), 9600);
+        }
     }
 
     @Override
@@ -166,28 +166,29 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     private void switchReceived(byte[] bytes) {
         String str = Tool.bytesToHexString(bytes);
-        Map<String, Integer> map;
         Log.i("ywl", bytes[1] + "str:" + str);
         switch (bytes[1]) {
             case HttpUtils.SERIAL_TYPE:
                 str = new String(bytes, Charset.forName("utf-8"));
                 tcpMap = "Action=CheckIn&Imei=" + str;
                 socketSend();
-//                map = new HashMap<>();
-//                map.put(Tool.MOTOR, HttpUtils.SERIAL_TYPE_5);
-//                map.put(Tool.MOTOR_NUMBER, 3);
-//                mSerialPortManager.sendBytes(map, Tool.SERIAL_TYPE_WHAT_5);
-                break;
-            case HttpUtils.SERIAL_TYPE_3:
                 break;
             case HttpUtils.SERIAL_TYPE_5:
-//                str = Tool.bytesToHexString(bytes);
-//                map = new HashMap<>();
-//                map.put(Tool.MOTOR, HttpUtils.SERIAL_TYPE_3);
-//                mSerialPortManager.sendBytes(map, Tool.SERIAL_TYPE_WHAT_3);
+                if (str.substring(4, 6).equals("00")) {
+                    VToast.showLong("出货成功");
+                } else {
+                    VToast.showLong("出货失败");
+                }
                 break;
         }
 
+    }
+
+    private void send05() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put(Tool.MOTOR, HttpUtils.SERIAL_TYPE_5);
+        map.put(Tool.MOTOR_NUMBER, 3);
+        mSerialPortManager.sendBytes(map, Tool.SERIAL_TYPE_WHAT_5);
     }
 
     private void socketSend() {
@@ -245,9 +246,9 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Override
     protected void onDestroy() {
-//        if (device != null) {
-//            mSerialPortManager.closeSerialPort();
-//        }
+        if (device != null) {
+            mSerialPortManager.closeSerialPort();
+        }
         super.onDestroy();
     }
 
