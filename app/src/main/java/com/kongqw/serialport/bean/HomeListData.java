@@ -15,6 +15,24 @@ public class HomeListData implements Serializable {
     private double price;
     private int num;
     private int left_num;
+    private int titlePosition;
+    private int contentPosition;
+
+    public int getTitlePosition() {
+        return titlePosition;
+    }
+
+    public void setTitlePosition(int titlePosition) {
+        this.titlePosition = titlePosition;
+    }
+
+    public int getContentPosition() {
+        return contentPosition;
+    }
+
+    public void setContentPosition(int contentPosition) {
+        this.contentPosition = contentPosition;
+    }
 
     public int getLeft_num() {
         return left_num;

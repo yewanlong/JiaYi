@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -59,73 +60,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private OkSocketOptions mOkOptions;
     private String tcpMap = "";
     private Handler handler = new Handler();
-    private Runnable mRunnable;
-
-    @Override
-    protected int getContentView() {
-        return R.layout.activity_main;
-    }
-
-    @Override
-    protected void initView() {
-        device = (Device) getIntent().getSerializableExtra(SerialPortActivity.DEVICE);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
-        homeFragment = new HomeFragment();
-        mSerialPortManager = new SerialPortManager2();
-        mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);
-        mOkOptions = new OkSocketOptions.Builder(OkSocketOptions.getDefault())
-                .setReconnectionManager(new NoneReconnect())
-                .build();
-        mManager = open(mInfo, mOkOptions);
-        mManager.registerReceiver(adapter);
-        mRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mManager.connect();
-            }
-        };
-        mManager.connect();
-    }
-
-
-    @Override
-    protected void initData() {
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, homeFragment)
-                .show(homeFragment).commit();
-    }
-
-    @Override
-    protected void initListener() {
-        findViewById(R.id.btn_gpio).setOnClickListener(this);
-        findViewById(R.id.btn_ck).setOnClickListener(this);
-        findViewById(R.id.btn_gpio2).setOnClickListener(this);
-        if (device != null) {
-            mSerialPortManager.setOnOpenSerialPortListener(this)
-                    .setOnSerialPortDataListener(new OnSerialPortDataListener2() {
-                        @Override
-                        public void onDataReceived(final byte[] bytes) {
-                            Log.i("ywl", "接收到数据");
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    switchReceived(bytes);
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onDataSent(final byte[] bytes, final int what) {
-                        }
-                    }).openSerialPort(new File("/dev/ttyS1"), 9600);
-        }
-    }
-
-    @Override
-    protected boolean isApplyEventBus() {
-        return false;
-    }
-
+    private Runnable mRunnable, mRunnableSub;
     private SocketActionAdapter adapter = new SocketActionAdapter() {
 
         @Override
@@ -174,6 +109,76 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
             Log.i("ywl", "onPulseSend:" + str);
         }
     };
+
+    @Override
+    protected int getContentView() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    protected void initView() {
+        device = (Device) getIntent().getSerializableExtra(SerialPortActivity.DEVICE);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
+        homeFragment = new HomeFragment();
+        mSerialPortManager = new SerialPortManager2();
+        mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);
+        mOkOptions = new OkSocketOptions.Builder(OkSocketOptions.getDefault())
+                .setReconnectionManager(new NoneReconnect())
+                .build();
+        mManager = open(mInfo, mOkOptions);
+        mManager.registerReceiver(adapter);
+        mRunnable = new Runnable() {
+            @Override
+            public void run() {
+                mManager.connect();
+            }
+        };
+        mRunnableSub = new Runnable() {
+            @Override
+            public void run() {
+                homeFragment.subtractList();
+            }
+        };
+        mManager.connect();
+    }
+
+    @Override
+    protected void initData() {
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, homeFragment)
+                .show(homeFragment).commit();
+    }
+
+    @Override
+    protected void initListener() {
+        findViewById(R.id.btn_gpio).setOnClickListener(this);
+        findViewById(R.id.btn_ck).setOnClickListener(this);
+        findViewById(R.id.btn_gpio2).setOnClickListener(this);
+        if (device != null) {
+            mSerialPortManager.setOnOpenSerialPortListener(this)
+                    .setOnSerialPortDataListener(new OnSerialPortDataListener2() {
+                        @Override
+                        public void onDataReceived(final byte[] bytes) {
+                            Log.i("ywl", "接收到数据");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    switchReceived(bytes);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onDataSent(final byte[] bytes, final int what) {
+                        }
+                    }).openSerialPort(new File("/dev/ttyS1"), 9600);
+        }
+    }
+
+    @Override
+    protected boolean isApplyEventBus() {
+        return false;
+    }
 
     private void switchReceived(byte[] bytes) {
         String str = Tool.bytesToHexString(bytes);
@@ -263,4 +268,18 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         super.onDestroy();
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN: {
+                VToast.showLong("ACTION_DOWN");
+                handler.removeCallbacks(mRunnableSub);
+            }
+            case MotionEvent.ACTION_UP: {
+                handler.postDelayed(mRunnableSub, 120000);
+                break;
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
 }

@@ -2,24 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:layout_height="110dp"
+    android:layout_height="45dp"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:visibility="gone"
-        android:layout_width="95dp"
-        android:layout_height="95dp"
-        android:src="@mipmap/ic_launcher" />
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="95dp"
+        android:layout_height="45dp"
         android:layout_marginLeft="5dp"
+        android:layout_marginRight="20dp"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tv_title"
@@ -27,25 +22,17 @@
             android:layout_height="wrap_content"
             android:text="可乐"
             android:textColor="@color/text_color"
-            android:textSize="@dimen/font_size_20sp" />
-
-        <TextView
-            android:id="@+id/tv_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:text="可乐"
-            android:textColor="@color/text_hint_color"
             android:textSize="@dimen/font_size_18sp" />
+
 
         <TextView
             android:id="@+id/tv_money"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:gravity="right|center_vertical"
             android:text="￥3.00 "
-            android:textColor="@color/colorAccent"
-            android:textSize="@dimen/font_size_20sp" />
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/font_size_18sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -55,7 +42,7 @@
 
         <ImageView
             android:id="@+id/iv_reduce"
-            android:layout_width="40dp"
+            android:layout_width="30dp"
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
             android:src="@mipmap/icon_reduce"
@@ -63,19 +50,19 @@
 
         <TextView
             android:id="@+id/tv_add_number"
-            android:textColor="@color/text_color"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:gravity="center"
-            android:textSize="@dimen/font_size_18sp"
             android:text="1"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/font_size_18sp"
             android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/iv_add"
-            android:layout_width="40dp"
+            android:layout_width="30dp"
             android:layout_height="match_parent"
             android:src="@mipmap/icon_add" />
     </LinearLayout>

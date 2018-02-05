@@ -22,10 +22,11 @@ public class HttpUtils {
     public final static int HTTP_STATUS = 0;
 
     public final static String HTTP_BASE = "http://hh.vpandian.com/api";
+    public static String IMEI = "868575021770443";
 
     public static StringRequest getAppList(RequestListener<String> listener) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("imei", "868575021770443");
+        jsonObject.put("imei", IMEI);
         StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/goodscat.do?pjson=" + jsonObject.toString(),
                 listener);
         return request;
@@ -37,4 +38,20 @@ public class HttpUtils {
         return request;
     }
 
+    public static StringRequest getOrder(RequestListener<String> listener, String pids) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("imei", IMEI);
+        jsonObject.put("pids", pids);
+        jsonObject.put("shuoming", "");
+        StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/orderadd.do?pjson=" + jsonObject.toString(),
+                listener);
+        return request;
+    }
+    public static StringRequest getOrder2(RequestListener<String> listener, String pids) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("oid", pids);
+        StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/wxcodepay.do?pjson=" + jsonObject.toString(),
+                listener);
+        return request;
+    }
 }

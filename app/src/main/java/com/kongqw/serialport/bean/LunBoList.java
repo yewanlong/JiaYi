@@ -21,7 +21,6 @@ public class LunBoList implements Serializable {
     }
 
     public String getImages() {
-        Log.i("ywl","image:"+images);
         if (TextUtils.isEmpty(images)) {
             images = "http://g.hiphotos.baidu.com/image/pic/item/10dfa9ec8a1363275cd315d09a8fa0ec08fac713.jpg";
         }
