@@ -3,6 +3,7 @@ package com.kongqw.serialport.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -57,6 +58,8 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private ConnectionInfo mInfo;
     private OkSocketOptions mOkOptions;
     private String tcpMap = "";
+    private Handler handler = new Handler();
+    private Runnable mRunnable;
 
     @Override
     protected int getContentView() {
@@ -75,6 +78,12 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 .build();
         mManager = open(mInfo, mOkOptions);
         mManager.registerReceiver(adapter);
+        mRunnable = new Runnable() {
+            @Override
+            public void run() {
+                mManager.connect();
+            }
+        };
         mManager.connect();
     }
 
@@ -130,6 +139,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         public void onSocketDisconnection(Context context, ConnectionInfo info, String action, Exception e) {
             if (e != null) {
                 Log.i("ywl", "异常断开:" + e.getMessage());
+                handler.postDelayed(mRunnable, 20000);
             } else {
                 Log.i("ywl", "正常断开:" + e.getMessage());
             }
@@ -139,6 +149,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         public void onSocketConnectionFailed(Context context, ConnectionInfo info, String action, Exception e) {
             VToast.showLong("TCP连接失败");
             Log.i("ywl", "连接失败:" + e.getMessage());
+            handler.postDelayed(mRunnable, 20000);
         }
 
         //接收
@@ -239,7 +250,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 VToast.showLong("串口打开失败");
                 break;
         }
-        tcpMap = "Action=SerialError&Mac=" + CommonUtils.getLocalMacAddressFromIp();
+        tcpMap = "Action=CheckError&Mac=" + CommonUtils.getLocalMacAddressFromIp();
         //TODO 获取成功向服务器发送TCP
         socketSend();
     }
