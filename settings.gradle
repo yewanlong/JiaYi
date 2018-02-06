@@ -1,1 +1,1 @@
-include ':app', ':SerialPortLibrary'
+include ':app', ':SerialPortLibrary',':socket'

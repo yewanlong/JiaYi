@@ -25,10 +25,6 @@ public class HandShake implements ISendable {
     @Override
     public byte[] parse() {
         byte[] body = content.getBytes(Charset.defaultCharset());
-        ByteBuffer bb = ByteBuffer.allocate(4 + body.length);
-        bb.order(ByteOrder.BIG_ENDIAN);
-        bb.putInt(body.length);
-        bb.put(body);
-        return bb.array();
+        return body;
     }
 }

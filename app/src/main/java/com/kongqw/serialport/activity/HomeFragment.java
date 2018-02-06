@@ -167,7 +167,8 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
                 case 1004:
                     OrderData orderData = JSON.parseObject(response, OrderData.class);
                     if (orderData.getStatus() == HttpUtils.HTTP_STATUS) {
-                        orderData.getQr_code();
+                        dismissProgressDialog();
+                        showCommentDialog(orderData.getQr_code());
                     } else {
                         dismissProgressDialog();
                         VToast.showLong("生成支付二维码失败");
@@ -392,5 +393,19 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
     private void getOrder2(String oid) {
         StringRequest request = HttpUtils.getOrder2(listener, oid);
         app.addRequestQueue(1004, request, this);
+    }
+
+    private CommentDialog commentDialog;
+
+    private void showCommentDialog(String url) {
+        if (commentDialog == null) {
+            commentDialog = new CommentDialog(getActivity(), R.style.myDialogTheme, url);
+            commentDialog.setCanceledOnTouchOutside(false);
+            commentDialog.show();
+        } else {
+            commentDialog.setUrl(url);
+            commentDialog.show();
+        }
+
     }
 }

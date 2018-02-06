@@ -40,6 +40,7 @@ import com.xuhao.android.libsocket.sdk.connection.IConnectionManager;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,23 +52,21 @@ import static com.xuhao.android.libsocket.sdk.OkSocket.open;
  */
 
 public class MainActivity extends YBaseActivity implements View.OnClickListener, OnOpenSerialPortListener {
-
     private HomeFragment homeFragment;
     private SerialPortManager2 mSerialPortManager;
     private Device device;
     private IConnectionManager mManager;
     private ConnectionInfo mInfo;
     private OkSocketOptions mOkOptions;
-    private String tcpMap = "";
     private Handler handler = new Handler();
-    private Runnable mRunnable, mRunnableSub;
+    private Runnable mRunnable, mRunnableSub, mRunnableCSQ;
+    private long msgId = 0;
     private SocketActionAdapter adapter = new SocketActionAdapter() {
 
         @Override
         public void onSocketConnectionSuccess(Context context, ConnectionInfo info, String action) {
-            if (!TextUtils.isEmpty(tcpMap)) {
-                mManager.send(new HandShake(tcpMap));
-            }
+            socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
+            handler.postDelayed(mRunnableCSQ, 30000);
         }
 
         @Override
@@ -91,6 +90,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         @Override
         public void onSocketReadResponse(Context context, ConnectionInfo info, String action, OriginalData data) {
             super.onSocketReadResponse(context, info, action, data);
+
             String str = new String(data.getBodyBytes(), Charset.forName("utf-8"));
             Log.i("ywl", "onSocketReadResponse:" + str);
         }
@@ -124,6 +124,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);
         mOkOptions = new OkSocketOptions.Builder(OkSocketOptions.getDefault())
                 .setReconnectionManager(new NoneReconnect())
+                .setSinglePackageBytes(100)
                 .build();
         mManager = open(mInfo, mOkOptions);
         mManager.registerReceiver(adapter);
@@ -139,7 +140,22 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 homeFragment.subtractList();
             }
         };
+        mRunnable = new Runnable() {
+            @Override
+            public void run() {
+                mManager.connect();
+            }
+        };
+        mRunnableCSQ = new Runnable() {
+            @Override
+            public void run() {
+                socketSend(HttpUtils.getCSQ(msgId, HttpUtils.IMEI));
+                msgId++;
+                handler.postDelayed(mRunnableCSQ, 30000);
+            }
+        };
         mManager.connect();
+        Log.i("ywl", "size:" + mOkOptions.getSendSinglePackageBytes());
     }
 
     @Override
@@ -151,9 +167,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Override
     protected void initListener() {
-        findViewById(R.id.btn_gpio).setOnClickListener(this);
-        findViewById(R.id.btn_ck).setOnClickListener(this);
-        findViewById(R.id.btn_gpio2).setOnClickListener(this);
         if (device != null) {
             mSerialPortManager.setOnOpenSerialPortListener(this)
                     .setOnSerialPortDataListener(new OnSerialPortDataListener2() {
@@ -181,21 +194,33 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     }
 
     private void switchReceived(byte[] bytes) {
-        String str = Tool.bytesToHexString(bytes);
-        Log.i("ywl", bytes[1] + "str:" + str);
         switch (bytes[1]) {
-            case HttpUtils.SERIAL_TYPE:
-                str = new String(bytes, Charset.forName("utf-8"));
-                tcpMap = "Action=CheckIn&Imei=" + str;
-                socketSend();
-                break;
-            case HttpUtils.SERIAL_TYPE_5:
+            case HttpUtils.SERIAL_TYPE: {
+                String str = Tool.bytesToHexString(bytes);
+                str = str.substring(14, 28);
+                byte[] send_start = new byte[7];
+                int start = 0;
+                int end = 2;
+                for (int i = 0; i < send_start.length; i++) {
+                    send_start[i] = (byte) Integer.parseInt(str.substring(start, end), 16);
+                    start = start + 2;
+                    end = end + 2;
+                }
+                str = new String(send_start, Charset.forName("utf-8"));
+                HttpUtils.IMEI = str;
+                socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
+                handler.postDelayed(mRunnableCSQ, 300000);
+            }
+            break;
+            case HttpUtils.SERIAL_TYPE_5: {
+                String str = Tool.bytesToHexString(bytes);
                 if (str.substring(4, 6).equals("00")) {
                     VToast.showLong("出货成功");
                 } else {
                     VToast.showLong("出货失败");
                 }
-                break;
+            }
+            break;
         }
 
     }
@@ -207,7 +232,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         mSerialPortManager.sendBytes(map, Tool.SERIAL_TYPE_WHAT_5);
     }
 
-    private void socketSend() {
+    private void socketSend(String tcpMap) {
         if (!mManager.isConnect()) {
             mManager.connect();
         } else {
@@ -218,15 +243,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_gpio:
-                startActivity(new Intent(this, GpioActivity1.class));
-                break;
-            case R.id.btn_ck:
-                startActivity(new Intent(this, SelectSerialPortActivity.class));
-                break;
-            case R.id.btn_gpio2:
-                startActivity(new Intent(this, GpioActivity2.class));
-                break;
         }
     }
 
@@ -255,15 +271,13 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 VToast.showLong("串口打开失败");
                 break;
         }
-        tcpMap = "Action=CheckError&Mac=" + CommonUtils.getLocalMacAddressFromIp();
-        //TODO 获取成功向服务器发送TCP
-        socketSend();
     }
 
     @Override
     protected void onDestroy() {
         if (device != null) {
             mSerialPortManager.closeSerialPort();
+            mManager.disConnect();
         }
         super.onDestroy();
     }
@@ -272,7 +286,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     public boolean dispatchTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN: {
-                VToast.showLong("ACTION_DOWN");
                 handler.removeCallbacks(mRunnableSub);
             }
             case MotionEvent.ACTION_UP: {

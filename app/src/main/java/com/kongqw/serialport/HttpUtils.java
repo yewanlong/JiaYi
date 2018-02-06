@@ -5,6 +5,8 @@ import com.android.volley.Request;
 import com.kongqw.serialport.volley.RequestListener;
 import com.kongqw.serialport.volley.StringRequest;
 
+import java.util.Date;
+
 
 /**
  * Created by Lkn on 2018/1/10.
@@ -22,7 +24,17 @@ public class HttpUtils {
     public final static int HTTP_STATUS = 0;
 
     public final static String HTTP_BASE = "http://hh.vpandian.com/api";
-    public static String IMEI = "868575021770443";
+    public static String IMEI = "665545011720443";
+
+    public static String getCheckIn(long msgId, String imei) {
+        return "Action=CheckIn&Imei=" + imei + "&MsgId=" + msgId + "&Timer="
+                + new Date().getTime();
+    }
+
+    public static String getCSQ(long msgId, String imei) {
+        return "Action=CSQ&Imei=" + imei + "&MsgId=" + msgId + "&Timer="
+                + new Date().getTime();
+    }
 
     public static StringRequest getAppList(RequestListener<String> listener) {
         JSONObject jsonObject = new JSONObject();
@@ -47,6 +59,7 @@ public class HttpUtils {
                 listener);
         return request;
     }
+
     public static StringRequest getOrder2(RequestListener<String> listener, String pids) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("oid", pids);

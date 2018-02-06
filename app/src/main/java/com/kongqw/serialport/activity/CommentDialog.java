@@ -1,15 +1,26 @@
 package com.kongqw.serialport.activity;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kongqw.serialport.R;
 import com.kongqw.serialport.utils.ScreenUtil;
+import com.kongqw.serialport.utils.VToast;
+import com.kongqw.serialport.weight.OptionsUtils;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 
 /**
@@ -17,77 +28,95 @@ import com.kongqw.serialport.utils.ScreenUtil;
  */
 public class CommentDialog extends Dialog implements View.OnClickListener {
     private Context context;
-    private CommentListener onclickListener;
-    private TextView phoneTextView, videoTextView;
-    private int position, type;
+    private TextView tv_close, tv_content;
+    private ImageView imageView;
+    private String url;
+    private Handler handler = new Handler();
+    private Runnable mRunnable;
+    private MyCountDownTimer mc;
 
-    public CommentDialog(Context context, int theme, int type, int position) {
+    public CommentDialog(Context context, int theme, String url) {
         super(context, theme);
         this.context = context;
-        this.position = position;
-        this.type = type;
+        this.url = url;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.dialog_social_main);
+        setContentView(R.layout.dialoag_qcode);
+        mRunnable = new Runnable() {
+            @Override
+            public void run() {
+                dismiss();
+            }
+        };
         initManager();
         initView();
         initListener();
     }
 
     private void initView() {
-//        phoneTextView = (TextView) findViewById(R.id.tv_phone);
-//        videoTextView = (TextView) findViewById(R.id.tv_video);
-        //type = 0，1表示是自己的评论 2表示回复别人
-        if (type == 0) {
-            phoneTextView.setText("删除");
-            videoTextView.setVisibility(View.GONE);
-        } else if (type == 1) {
-            phoneTextView.setText("删除");
-            videoTextView.setText("复制");
-            phoneTextView.setVisibility(View.VISIBLE);
-        } else if (type == 2) {
-            phoneTextView.setText("回复");
-            videoTextView.setText("复制");
-        }
+        tv_close = (TextView) findViewById(R.id.tv_close);
+        tv_content = findViewById(R.id.tv_content);
+        imageView = findViewById(R.id.imageView);
+        mc = new MyCountDownTimer(70000, 1000);
+        mc.start();
+        handler.postDelayed(mRunnable, 70000);
+        imageView.setImageResource(R.mipmap.ic_friends_sends_pictures_no);
+        ImageLoader.getInstance().displayImage(url, imageView, OptionsUtils.
+                options(R.mipmap.ic_friends_sends_pictures_no));
     }
 
     private void initManager() {
         WindowManager.LayoutParams params = getWindow().getAttributes(); // 获取对话框当前的参数值
-        int width = (int) (ScreenUtil.getInstance(context).getWidth() * 0.75);
-        params.width = width;
+        params.width = (int) (ScreenUtil.getInstance(context).getWidth() * 0.75);
+        params.height = (int) (ScreenUtil.getInstance(context).getHeight() * 0.65);
         params.gravity = Gravity.CENTER;
         onWindowAttributesChanged(params);
     }
 
     private void initListener() {
-        videoTextView.setOnClickListener(this);
-        phoneTextView.setOnClickListener(this);
+        tv_close.setOnClickListener(this);
     }
 
-    public void setDialogClickListener(CommentListener dialogOnclickListener) {
-        this.onclickListener = dialogOnclickListener;
+    @Override
+    protected void onStop() {
+        handler.removeCallbacks(mRunnable);
+        mc.cancel();
+        super.onStop();
+    }
+
+    public void setUrl(String url) {
+        imageView.setImageResource(R.mipmap.ic_friends_sends_pictures_no);
+        ImageLoader.getInstance().displayImage(url, imageView, OptionsUtils.
+                options(R.mipmap.ic_friends_sends_pictures_no));
+        this.url = url;
+        mc.start();
     }
 
     @Override
     public void onClick(View v) {
         // TODO Auto-generated method stub
         switch (v.getId()) {
-//            case R.id.tv_phone:
-//                onclickListener.dialogOnclick(phoneTextView.getText().toString(), position);
-//                dismiss();
-//                break;
-//            case R.id.tv_video:
-//                onclickListener.dialogOnclick(videoTextView.getText().toString(), position);
-//                dismiss();
-//                break;
+            case R.id.tv_close:
+                dismiss();
+                break;
         }
     }
 
-    public interface CommentListener {
-        void dialogOnclick(String type, int position);
+    class MyCountDownTimer extends CountDownTimer {
+        public MyCountDownTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+            tv_content.setText("70秒后自动返回");
+        }
+
+        public void onFinish() {
+        }
+
+        public void onTick(long millisUntilFinished) {
+            tv_content.setText((millisUntilFinished / 1000) + "秒后自动返回");
+        }
     }
 }

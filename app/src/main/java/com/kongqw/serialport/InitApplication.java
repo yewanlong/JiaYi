@@ -13,9 +13,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.kongqw.serialport.utils.ImageLoaderUtil;
 import com.kongqw.serialport.volley.BaseRequest;
-import com.kongqw.serialportlibrary.SerialPort;
-import com.kongqw.serialportlibrary.SerialPortFinder;
-import com.squareup.leakcanary.LeakCanary;
 import com.xuhao.android.libsocket.sdk.OkSocket;
 
 /**
@@ -32,10 +29,10 @@ public class InitApplication extends Application {
         applicationContext = this;
         instance = this;
         super.onCreate();
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return;
-        }
-        LeakCanary.install(this);
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            return;
+//        }
+//        LeakCanary.install(this);
         OkSocket.initialize(this, true);
         ImageLoaderUtil.initImageLoaderConfig(applicationContext);
     }

@@ -144,7 +144,6 @@ public class SerialPortManager2 extends SerialPort {
         byte[] data = new byte[0];
         switch (what) {
             case Tool.SERIAL_TYPE_WHAT_1:
-            case Tool.SERIAL_TYPE_WHAT_3:
                 data = new byte[]{(byte) 1, (byte) type, (byte) 0, (byte) 3, (byte) 0, (byte) 0, (byte) 0,
                         (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
                 break;

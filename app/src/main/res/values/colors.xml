@@ -10,5 +10,6 @@
     <color name="white">#ffffff</color>
     <color name="background">#77b23c</color>
     <color name="grey">#f0eff5</color>
+    <color name="gallery_back_view">#40000000</color>
 
 </resources>
