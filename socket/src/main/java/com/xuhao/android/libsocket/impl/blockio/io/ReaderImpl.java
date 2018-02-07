@@ -12,6 +12,7 @@ import com.xuhao.android.libsocket.utils.SL;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * Created by xuhao on 2017/5/31.
@@ -28,6 +29,8 @@ public class ReaderImpl extends AbsReader {
     @Override
     public void read() throws RuntimeException {
         OriginalData originalData = new OriginalData();
+        //        originalData.setBodyBytes(execute(mInputStream));
+//        mStateSender.sendBroadcast(IAction.ACTION_READ_COMPLETE, originalData);
         IHeaderProtocol headerProtocol = mOkOptions.getHeaderProtocol();
         ByteBuffer headBuf = ByteBuffer.allocate(headerProtocol.getHeaderLength());
         headBuf.order(mOkOptions.getReadByteOrder());
@@ -130,5 +133,16 @@ public class ReaderImpl extends AbsReader {
             SL.i("read total length:" + (byteBuffer.capacity() - byteBuffer.remaining()));
         }
     }
-
+    public byte[] execute(InputStream is) {
+        byte[] bytes = new byte[256];
+        int len;
+        try {
+            if ((len = is.read(bytes)) != -1) {
+                return Arrays.copyOf(bytes, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

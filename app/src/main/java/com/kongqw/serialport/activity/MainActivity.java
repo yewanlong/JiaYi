@@ -90,8 +90,8 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         @Override
         public void onSocketReadResponse(Context context, ConnectionInfo info, String action, OriginalData data) {
             super.onSocketReadResponse(context, info, action, data);
-
             String str = new String(data.getBodyBytes(), Charset.forName("utf-8"));
+            ReadResponse(str);
             Log.i("ywl", "onSocketReadResponse:" + str);
         }
 
@@ -124,7 +124,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);
         mOkOptions = new OkSocketOptions.Builder(OkSocketOptions.getDefault())
                 .setReconnectionManager(new NoneReconnect())
-                .setSinglePackageBytes(100)
+                .setSinglePackageBytes(1024)
                 .build();
         mManager = open(mInfo, mOkOptions);
         mManager.registerReceiver(adapter);
@@ -155,7 +155,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
             }
         };
         mManager.connect();
-        Log.i("ywl", "size:" + mOkOptions.getSendSinglePackageBytes());
     }
 
     @Override
@@ -294,5 +293,16 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
             }
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    private void ReadResponse(String str) {
+        String[] strs = str.split("&");
+        if (strs.length == 0) {
+            return;
+        }
+        switch (strs[0]) {
+            case "Action=goodsnotice":
+                break;
+        }
     }
 }

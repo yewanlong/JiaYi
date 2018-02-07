@@ -14,17 +14,21 @@ import java.util.Date;
 
 public class HttpUtils {
     protected final static String TCP_URL = "zxy.vpandian.com";
+    //    protected final static String TCP_URL = "104.238.184.237";
     public final static String TCP_IP = TCP_URL;
     protected final static int TCP_PRO = 1368;
+//    protected final static int TCP_PRO = 8080;
+
     public final static int TCP_PRO_IP = TCP_PRO;
     //命令
+
     public final static int SERIAL_TYPE = 1; //获取序列号
     public final static int SERIAL_TYPE_5 = 5; //启动电机
 
     public final static int HTTP_STATUS = 0;
 
     public final static String HTTP_BASE = "http://hh.vpandian.com/api";
-    public static String IMEI = "665545011720443";
+    public static String IMEI = "868575021770443";
 
     public static String getCheckIn(long msgId, String imei) {
         return "Action=CheckIn&Imei=" + imei + "&MsgId=" + msgId + "&Timer="
