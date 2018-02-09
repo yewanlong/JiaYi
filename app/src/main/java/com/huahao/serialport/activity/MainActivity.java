@@ -55,7 +55,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
         @Override
         public void onSocketConnectionSuccess(Context context, ConnectionInfo info, String action) {
-            socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
+//            socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
         }
 
         @Override
@@ -194,9 +194,10 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 if (str.substring(4, 6).equals("00")) {
                     socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 1, id, SaleId, 1));
                     homeFragment.subtractList();
-
+                    VToast.showLong("出货成功啦");
                 } else if (str.substring(4, 6).equals("02")) {
                     send05(id, SaleId);
+                    VToast.showLong("电机正在运行..请稍后");
                 } else {
                     VToast.showLong("出货失败，正在退款，请稍后...");
                     socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 0, id, SaleId, 0));
