@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <com.kongqw.serialport.weight.ImageCycleView
+    <com.huahao.serialport.weight.ImageCycleView
         android:id="@+id/cycleView"
         android:layout_width="match_parent"
         android:layout_height="150dp" />

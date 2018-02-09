@@ -8,7 +8,7 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="95dp"
         android:layout_height="95dp"
         android:src="@mipmap/ic_launcher" />
