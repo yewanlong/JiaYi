@@ -1,4 +1,4 @@
-package com.huahao.serialportlibrary;
+package com.kongqw.serialportlibrary;
 
 import android.support.v4.internal.view.SupportMenu;
 import android.support.v4.view.MotionEventCompat;
@@ -8,6 +8,8 @@ public class Tool {
     //接收what
     public final static int SERIAL_TYPE_WHAT_1 = 1001; //获取序列号
     public final static int SERIAL_TYPE_WHAT_5 = 1005; //电机
+    public final static int SERIAL_TYPE_WHAT_4 = 1004;
+
     public final static String MOTOR = "MOTOR";
     public final static String MOTOR_NUMBER = "MOTOR_NUMBER";
     public static String bytesToHexString(byte[] bArray) {

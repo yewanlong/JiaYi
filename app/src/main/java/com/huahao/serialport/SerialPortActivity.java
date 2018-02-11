@@ -10,11 +10,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.huahao.serialportlibrary.Device;
-import com.huahao.serialportlibrary.SerialPortManager;
-import com.huahao.serialportlibrary.Tool;
-import com.huahao.serialportlibrary.listener.OnOpenSerialPortListener;
-import com.huahao.serialportlibrary.listener.OnSerialPortDataListener;
+import com.kongqw.serialportlibrary.Device;
+import com.kongqw.serialportlibrary.SerialPortManager;
+import com.kongqw.serialportlibrary.Tool;
+import com.kongqw.serialportlibrary.listener.OnOpenSerialPortListener;
+import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener;
 
 import java.io.File;
 import java.util.Arrays;

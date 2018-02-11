@@ -24,6 +24,7 @@ public class HttpUtils {
 
     public final static int SERIAL_TYPE = 1; //获取序列号
     public final static int SERIAL_TYPE_5 = 5; //启动电机
+    public final static int SERIAL_TYPE_4 = 4; //查看电机是否异常
 
     public final static int HTTP_STATUS = 0;
 
@@ -44,7 +45,9 @@ public class HttpUtils {
         return "Action=Deliver&Imei=" + imei + "&MsgId=1" + "&Timer="
                 + new Date().getTime() + "&Result=" + Result + "&ChannelIndex=" + ChannelIndex + "&SaleId=" + SaleId + "&AlarmCode=" + AlarmCode;
     }
-
+    public static String getChannelStatus(String imei,String ChannelStatus) {
+        return "MsgId=1&Imei="+imei+"&Action=ChannelStatus&Timer="+ new Date().getTime()+"&Index=0&ChannelStatus="+ChannelStatus;
+    }
     public static StringRequest getAppList(RequestListener<String> listener) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("imei", IMEI);

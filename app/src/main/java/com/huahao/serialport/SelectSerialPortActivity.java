@@ -6,10 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.huahao.serialport.adapter.DeviceAdapter;
-import com.huahao.serialportlibrary.Device;
-import com.huahao.serialportlibrary.SerialPortFinder;
+import com.kongqw.serialportlibrary.Device;
+import com.kongqw.serialportlibrary.SerialPortFinder;
 
 import java.util.ArrayList;
 

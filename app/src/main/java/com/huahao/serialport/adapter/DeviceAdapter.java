@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.huahao.serialport.R;
-import com.huahao.serialportlibrary.Device;
+import com.kongqw.serialportlibrary.Device;
 
 import java.io.File;
 import java.util.ArrayList;

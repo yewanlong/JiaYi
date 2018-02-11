@@ -1,4 +1,4 @@
-package com.huahao.serialportlibrary;
+package com.kongqw.serialportlibrary;
 
 import java.io.File;
 import java.io.FileDescriptor;

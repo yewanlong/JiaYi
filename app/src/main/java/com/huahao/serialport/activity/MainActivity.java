@@ -16,10 +16,10 @@ import com.huahao.serialport.bean.EventApk;
 import com.huahao.serialport.bean.HandShake;
 import com.huahao.serialport.utils.SilentInstall;
 import com.huahao.serialport.utils.VToast;
-import com.huahao.serialportlibrary.SerialPortManager2;
-import com.huahao.serialportlibrary.Tool;
-import com.huahao.serialportlibrary.listener.OnOpenSerialPortListener;
-import com.huahao.serialportlibrary.listener.OnSerialPortDataListener2;
+import com.kongqw.serialportlibrary.SerialPortManager2;
+import com.kongqw.serialportlibrary.Tool;
+import com.kongqw.serialportlibrary.listener.OnOpenSerialPortListener;
+import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener2;
 import com.xuhao.android.libsocket.sdk.ConnectionInfo;
 import com.xuhao.android.libsocket.sdk.OkSocketOptions;
 import com.xuhao.android.libsocket.sdk.SocketActionAdapter;
@@ -31,7 +31,6 @@ import com.xuhao.android.libsocket.sdk.connection.IConnectionManager;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +50,9 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private Handler handler = new Handler();
     private Runnable mRunnable, mRunnableSub, mRunnableCSQ;
     private long msgId = 0;
+    private int channelLenght = 0;
+    private String channelStr = "";
+    private String[] channelId = new String[0];
     private SocketActionAdapter adapter = new SocketActionAdapter() {
 
         @Override
@@ -97,7 +99,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Override
     protected void initView() {
-        app.addActivity(this);
+//        app.addActivity(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         homeFragment = new HomeFragment();
         mSerialPortManager = new SerialPortManager2();
@@ -187,25 +189,49 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
                 handler.postDelayed(mRunnableCSQ, 300000);
                 homeFragment.getLunbo();
+                break;
             }
-            break;
+            case HttpUtils.SERIAL_TYPE_4: {
+                String str = Tool.bytesToHexString(bytes);
+                if (str.contains("AA")) {
+                    setChannelStr("0");
+                } else if (str.contains("BB")) {
+                    setChannelStr("1");
+                } else {
+                    setChannelStr("2");
+                }
+                channelLenght++;
+                if (channelLenght < channelId.length) {
+                    send04(Integer.valueOf(channelId[channelLenght]));
+                } else {
+                    socketSend(HttpUtils.getChannelStatus(HttpUtils.IMEI, channelStr));
+                }
+                break;
+            }
             case HttpUtils.SERIAL_TYPE_5: {
                 String str = Tool.bytesToHexString(bytes);
                 if (str.substring(4, 6).equals("00")) {
                     socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 1, id, SaleId, 1));
                     homeFragment.subtractList();
                     VToast.showLong("出货成功啦");
-                } else if (str.substring(4, 6).equals("02")) {
+                } else if (str.substring(4, 6).equals("02") || str.substring(4, 6).equals("32")) {
                     send05(id, SaleId);
                     VToast.showLong("电机正在运行..请稍后");
                 } else {
                     VToast.showLong("出货失败，正在退款，请稍后...");
                     socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 0, id, SaleId, 0));
                 }
+                break;
             }
-            break;
         }
 
+    }
+
+    private void setChannelStr(String id) {
+        if (channelLenght == (channelId.length - 1))
+            channelStr = channelStr + id;
+        else
+            channelStr = channelStr + id + ",";
     }
 
     private void send05(int id, String SaleId) {
@@ -214,6 +240,14 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         map.put(Tool.MOTOR_NUMBER, id);
         mSerialPortManager.sendBytes(map, Tool.SERIAL_TYPE_WHAT_5);
         mSerialPortManager.startReadThread(id, SaleId);
+    }
+
+    private void send04(int id) {
+        Map<String, Integer> map = new HashMap<>();
+        map.put(Tool.MOTOR, HttpUtils.SERIAL_TYPE_4);
+        map.put(Tool.MOTOR_NUMBER, id);
+        mSerialPortManager.sendBytes(map, Tool.SERIAL_TYPE_WHAT_4);
+        mSerialPortManager.startReadThread(id, "");
     }
 
     private void socketSend(String tcpMap) {
@@ -305,12 +339,18 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
             case "GetGoods":
                 homeFragment.initList();
                 break;
+            case "ChannelStatus":
+                channelStr = "";
+                channelLenght = 0;
+                channelId = jsonObject.getString("ChannelStatus").split(",");
+                send04(Integer.valueOf(channelId[channelLenght]));
+                break;
         }
     }
 
 
     @Subscribe
     public void onEventMainThread(EventApk event) {
-        SilentInstall.install(event.getPath());
+//        SilentInstall.install(event.getPath());
     }
 }

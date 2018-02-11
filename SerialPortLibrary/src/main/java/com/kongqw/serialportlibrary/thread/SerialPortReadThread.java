@@ -1,4 +1,4 @@
-package com.huahao.serialportlibrary.thread;
+package com.kongqw.serialportlibrary.thread;
 
 import android.util.Log;
 
@@ -10,19 +10,16 @@ import java.io.InputStream;
  * 串口消息读取线程
  */
 
-public abstract class SerialPortReadThread2 extends Thread {
+public abstract class SerialPortReadThread extends Thread {
 
-    public abstract void onDataReceived(byte[] bytes, int what,String saleId);
+    public abstract void onDataReceived(byte[] bytes);
 
-    private static final String TAG = SerialPortReadThread2.class.getSimpleName();
+    private static final String TAG = SerialPortReadThread.class.getSimpleName();
     private InputStream mInputStream;
     private byte[] mReadBuffer;
-    private int what;
-    private String saleId;
-    public SerialPortReadThread2(InputStream inputStream,int what,String saleId) {
+
+    public SerialPortReadThread(InputStream inputStream) {
         mInputStream = inputStream;
-        this.what = what;
-        this.saleId = saleId;
         mReadBuffer = new byte[1024];
     }
 
@@ -46,7 +43,7 @@ public abstract class SerialPortReadThread2 extends Thread {
                 byte[] readBytes = new byte[size];
 
                 System.arraycopy(mReadBuffer, 0, readBytes, 0, size);
-                onDataReceived(readBytes, what,saleId);
+                onDataReceived(readBytes);
 
             } catch (IOException e) {
                 e.printStackTrace();

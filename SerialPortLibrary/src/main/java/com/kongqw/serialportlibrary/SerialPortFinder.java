@@ -1,4 +1,4 @@
-package com.huahao.serialportlibrary;
+package com.kongqw.serialportlibrary;
 
 import android.util.Log;
 
