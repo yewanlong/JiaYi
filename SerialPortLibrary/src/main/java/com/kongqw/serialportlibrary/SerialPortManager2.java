@@ -144,15 +144,21 @@ public class SerialPortManager2 extends SerialPort {
         byte[] data = new byte[0];
         switch (what) {
             case Tool.SERIAL_TYPE_WHAT_1:
-                data = new byte[]{(byte) 1, (byte) type, (byte) 0, (byte) 3, (byte) 0, (byte) 0, (byte) 0,
+                data = new byte[]{(byte) 1, (byte) type, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
                         (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
                 break;
-            case Tool.SERIAL_TYPE_WHAT_5:
+            case Tool.SERIAL_TYPE_WHAT_5: {
                 int number = map.get(Tool.MOTOR_NUMBER);
-                data = new byte[]{(byte) 1, (byte) type, (byte) 0, (byte) number, (byte) 0, (byte) 0, (byte) 0,
+                data = new byte[]{(byte) 1, (byte) type, (byte) number, (byte) 3, (byte) 0, (byte) 0, (byte) 0,
                         (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
                 break;
-
+            }
+            case Tool.SERIAL_TYPE_WHAT_4: {
+                int number = map.get(Tool.MOTOR_NUMBER);
+                data = new byte[]{(byte) 1, (byte) type, (byte) number, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+                        (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+                break;
+            }
         }
 
         return Tool.bytesToHexString(data) + Tool.Make_CRC(data);
@@ -209,19 +215,20 @@ public class SerialPortManager2 extends SerialPort {
     /**
      * 开启接收消息的线程
      */
-    private void startReadThread() {
+    public void startReadThread() {
         mSerialPortReadThread = new SerialPortReadThread2(mFileInputStream) {
             @Override
-            public void onDataReceived(byte[] bytes, int what) {
+            public void onDataReceived(byte[] bytes, int what, String SaleId) {
                 if (null != mOnSerialPortDataListener) {
-                    mOnSerialPortDataListener.onDataReceived(bytes);
+                    mOnSerialPortDataListener.onDataReceived(bytes, what, SaleId);
                 }
             }
         };
         mSerialPortReadThread.start();
     }
-
-    /**
+    public void setWhat(int what,String saleId){
+        mSerialPortReadThread.setWhat(what,saleId);
+    }    /**
      * 停止接收消息的线程
      */
     private void stopReadThread() {

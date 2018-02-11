@@ -12,19 +12,22 @@ import java.io.InputStream;
 
 public abstract class SerialPortReadThread2 extends Thread {
 
-    public abstract void onDataReceived(byte[] bytes, int what);
+    public abstract void onDataReceived(byte[] bytes, int what,String saleId);
 
     private static final String TAG = SerialPortReadThread2.class.getSimpleName();
     private InputStream mInputStream;
     private byte[] mReadBuffer;
     private int what;
-
+    private String saleId;
     public SerialPortReadThread2(InputStream inputStream) {
         mInputStream = inputStream;
-        this.what = what;
+
         mReadBuffer = new byte[1024];
     }
-
+    public void setWhat(int what,String saleId){
+        this.what = what;
+        this.saleId = saleId;
+    }
     @Override
     public void run() {
         super.run();
@@ -45,7 +48,7 @@ public abstract class SerialPortReadThread2 extends Thread {
                 byte[] readBytes = new byte[size];
 
                 System.arraycopy(mReadBuffer, 0, readBytes, 0, size);
-                onDataReceived(readBytes, what);
+                onDataReceived(readBytes, what,saleId);
 
             } catch (IOException e) {
                 e.printStackTrace();

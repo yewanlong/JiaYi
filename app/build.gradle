@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
-        applicationId "com.kongqw.serialport"
+        applicationId "com.huahao.serialport"
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
@@ -24,7 +24,6 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
     compile project(':SerialPortLibrary')
     compile project(':socket')
     compile 'com.android.support:design:26.1.0'
@@ -32,6 +31,6 @@ dependencies {
 //    compile 'com.tonystark.android:socket:1.2.0'
     compile 'org.greenrobot:eventbus:3.0.0'
     testCompile 'junit:junit:4.12'
-//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
 //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 }

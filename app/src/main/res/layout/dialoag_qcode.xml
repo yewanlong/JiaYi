@@ -31,8 +31,8 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:src="@mipmap/ic_friends_sends_pictures_no" />
 
         <TextView
@@ -46,12 +46,12 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tv_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:gravity="center"
         android:padding="13dp"
-        android:id="@+id/tv_content"
         android:text="70秒后自动返回"
         android:textColor="@color/text_hint_color"
         android:textSize="@dimen/font_size_16sp" />
