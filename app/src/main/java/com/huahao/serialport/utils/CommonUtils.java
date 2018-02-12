@@ -1,10 +1,12 @@
 
 package com.huahao.serialport.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.telephony.TelephonyManager;
 
 public class CommonUtils {
     /**
@@ -18,6 +20,7 @@ public class CommonUtils {
         }
         return false;
     }
+
     public static int getAppVersionCode(Context context) {
         PackageManager pm = context.getPackageManager();
         try {
@@ -29,5 +32,12 @@ public class CommonUtils {
             return -1;
         }
     }
+
+    @SuppressLint("MissingPermission")
+    public static String getSubscriberId(Context context) {
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(context.TELEPHONY_SERVICE);
+        return telephonyManager.getDeviceId();
+    }
+
 
 }

@@ -1,7 +1,11 @@
 package com.huahao.serialport.activity;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -16,6 +20,7 @@ import org.greenrobot.eventbus.EventBus;
 public abstract class YBaseActivity extends AppCompatActivity {
     public static InitApplication app = InitApplication.getInstance();
     public ProgressDialog pd;
+    public static final int REQUEST_FOR_PERMISSIONS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,18 @@ public abstract class YBaseActivity extends AppCompatActivity {
     public void dismissProgressDialog() {
         if (!isFinishing() && pd != null && pd.isShowing())
             pd.dismiss();
+    }
+    public boolean lacksPermissions(String... permissions) {
+        for (String permission : permissions) {
+            if (lacksPermission(permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean lacksPermission(String permission) {
+        return ContextCompat.checkSelfPermission(getApplicationContext(), permission) ==
+                PackageManager.PERMISSION_DENIED;
     }
 
     public <T> T $(int viewId) {

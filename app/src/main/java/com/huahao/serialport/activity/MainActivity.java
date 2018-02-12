@@ -1,8 +1,11 @@
 package com.huahao.serialport.activity;
 
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,6 +17,7 @@ import com.huahao.serialport.NoneReconnect;
 import com.huahao.serialport.R;
 import com.huahao.serialport.bean.EventApk;
 import com.huahao.serialport.bean.HandShake;
+import com.huahao.serialport.utils.CommonUtils;
 import com.huahao.serialport.utils.SilentInstall;
 import com.huahao.serialport.utils.VToast;
 import com.kongqw.serialportlibrary.SerialPortManager2;
@@ -138,6 +142,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, homeFragment)
                 .show(homeFragment).commit();
+        checkPermission(SELFPERMISSIONS, 199);
     }
 
     @Override
@@ -166,29 +171,10 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     }
 
     private void switchReceived(byte[] bytes, int id, String SaleId) {
-        Log.i("ywl","switchReceived:"+Tool.bytesToHexString(bytes));
-        Log.i("ywl","switchReceived2:"+new String(bytes, Charset.forName("utf-8")));
+        Log.i("ywl", "switchReceived:" + Tool.bytesToHexString(bytes));
+        Log.i("ywl", "switchReceived2:" + new String(bytes, Charset.forName("utf-8")));
 
         switch (bytes[1]) {
-            case HttpUtils.SERIAL_TYPE: {
-                String str = Tool.bytesToHexString(bytes);
-                str = str.substring(14, 28);
-                byte[] send_start = new byte[7];
-                int start = 0;
-                int end = 2;
-                for (int i = 0; i < send_start.length; i++) {
-                    send_start[i] = (byte) Integer.parseInt(str.substring(start, end), 16);
-                    start = start + 2;
-                    end = end + 2;
-                }
-                str = new String(send_start, Charset.forName("utf-8"));
-//                HttpUtils.IMEI = str;
-                homeFragment.initList();
-                socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
-                handler.postDelayed(mRunnableCSQ, 300000);
-                homeFragment.getLunbo();
-                break;
-            }
             case HttpUtils.SERIAL_TYPE_4: {
                 String str = Tool.bytesToHexString(bytes);
                 if (str.contains("AA")) {
@@ -202,7 +188,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 if (channelLenght < channelId.length) {
                     send04(Integer.valueOf(channelId[channelLenght]));
                 } else {
-                    pd.dismiss();
+                    dismissProgressDialog();
                     socketSend(HttpUtils.getChannelStatus(HttpUtils.IMEI, channelStr));
                 }
                 break;
@@ -271,12 +257,25 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     @Override
     public void onSuccess(File device) {
         VToast.showLong("串口打开成功");
-        Map<String, Integer> map = new HashMap<>();
-        map.put(Tool.MOTOR, HttpUtils.SERIAL_TYPE);
-        mSerialPortManager.sendBytes(map, Tool.SERIAL_TYPE_WHAT_1);
-        mSerialPortManager.setWhat(Tool.SERIAL_TYPE_WHAT_1, "");
+        checkPermission(SELFPERMISSIONS, 199);
     }
 
+    public void checkPermission(String[] permissions, int REQUEST_FOR_PERMISSIONS) {
+        if (lacksPermissions(permissions)) {
+            ActivityCompat.requestPermissions(this,
+                    permissions,
+                    REQUEST_FOR_PERMISSIONS);
+        } else {
+            initImei();
+        }
+    }
+    private void initImei(){
+        HttpUtils.IMEI = CommonUtils.getSubscriberId(this);
+        homeFragment.initList();
+        socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
+        handler.postDelayed(mRunnableCSQ, 300000);
+        homeFragment.getLunbo();
+    }
     @Override
     public void onFail(File device, Status status) {
         switch (status) {
@@ -348,9 +347,27 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         }
     }
 
+    static final String[] SELFPERMISSIONS = new String[]{
+            Manifest.permission.READ_PHONE_STATE
+    };
 
     @Subscribe
     public void onEventMainThread(EventApk event) {
 //        SilentInstall.install(event.getPath());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 199:
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (i==0&&grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        initImei();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
