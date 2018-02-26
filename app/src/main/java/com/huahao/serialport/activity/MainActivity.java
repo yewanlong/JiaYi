@@ -269,13 +269,15 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
             initImei();
         }
     }
-    private void initImei(){
+
+    private void initImei() {
         HttpUtils.IMEI = CommonUtils.getSubscriberId(this);
         homeFragment.initList();
         socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
         handler.postDelayed(mRunnableCSQ, 300000);
         homeFragment.getLunbo();
     }
+
     @Override
     public void onFail(File device, Status status) {
         switch (status) {
@@ -361,7 +363,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         switch (requestCode) {
             case 199:
                 for (int i = 0; i < grantResults.length; i++) {
-                    if (i==0&&grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    if (i == 0 && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                         initImei();
                     }
                 }

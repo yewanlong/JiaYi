@@ -33,7 +33,7 @@ public class HttpUtils {
 
     public static String getCheckIn(long msgId, String imei) {
         return "Action=CheckIn&Imei=" + imei + "&MsgId=" + msgId + "&Timer="
-                + new Date().getTime();
+                + new Date().getTime()+"&devicefrom=2";
     }
 
     public static String getCSQ(long msgId, String imei) {
@@ -51,7 +51,7 @@ public class HttpUtils {
     public static StringRequest getAppList(RequestListener<String> listener) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("imei", IMEI);
-        StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/goodscat.do?pjson=" + jsonObject.toString(),
+        StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/goodsCatList.do?pjson=" + jsonObject.toString(),
                 listener);
         return request;
     }

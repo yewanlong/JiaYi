@@ -16,7 +16,7 @@ public class SilentInstall {
     public static void reboot() {
         java.lang.Process proc = null;
         try {
-            proc = Runtime.getRuntime().exec(new String[]{"su", "-c", "reboot -p"});
+            proc = Runtime.getRuntime().exec(new String[]{"su", "-c", "reboot"});
             proc.waitFor();
         } catch (IOException e) {
             e.printStackTrace();
