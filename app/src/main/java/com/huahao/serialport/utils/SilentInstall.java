@@ -53,8 +53,10 @@ public class SilentInstall {
                 result = true;
             }
         } catch (Exception e) {
+            VToast.showLong("报错:"+apkPath);
             Log.e("TAG", e.getMessage(), e);
         } finally {
+            VToast.showLong("成功："+apkPath);
             try {
                 if (dataOutputStream != null) {
                     dataOutputStream.close();
@@ -63,6 +65,7 @@ public class SilentInstall {
                     errorStream.close();
                 }
             } catch (IOException e) {
+                VToast.showLong("报错2："+apkPath);
                 Log.e("TAG", e.getMessage(), e);
             }
         }

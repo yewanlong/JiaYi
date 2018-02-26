@@ -142,7 +142,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, homeFragment)
                 .show(homeFragment).commit();
-        checkPermission(SELFPERMISSIONS, 199);
     }
 
     @Override
@@ -163,6 +162,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                     public void onDataSent(final byte[] bytes, final int what) {
                     }
                 }).openSerialPort(new File("/dev/ttyS1"), 9600);
+        checkPermission(SELFPERMISSIONS, 199);
     }
 
     @Override
@@ -197,8 +197,8 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 String str = Tool.bytesToHexString(bytes);
                 if (str.substring(4, 6).equals("00")) {
                     socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 1, id, SaleId, 1));
-                    homeFragment.subtractList();
-                    VToast.showLong("出货成功啦");
+                    homeFragment.initList2();
+                    VToast.showLong("出货成功");
                 } else if (str.substring(4, 6).equals("02") || str.substring(4, 6).equals("32")) {
                     send05(id, SaleId);
                     VToast.showLong("电机正在运行..请稍后");
@@ -272,10 +272,10 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     private void initImei() {
         HttpUtils.IMEI = CommonUtils.getSubscriberId(this);
-        homeFragment.initList();
         socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
-        handler.postDelayed(mRunnableCSQ, 300000);
+        handler.postDelayed(mRunnableCSQ, 5000);
         homeFragment.getLunbo();
+        homeFragment.initList();
     }
 
     @Override
@@ -355,7 +355,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Subscribe
     public void onEventMainThread(EventApk event) {
-//        SilentInstall.install(event.getPath());
+        SilentInstall.install(event.getPath());
     }
 
     @Override
