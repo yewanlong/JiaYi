@@ -11,7 +11,7 @@ import android.util.Log;
 
 public class BootBroadcastReceiver extends BroadcastReceiver {
     static final String ACTION = "android.intent.action.BOOT_COMPLETED";
-    static final String ACTION2 = "android.intent.action.PACKAGE_ADDED";
+    static final String ACTION2 = "android.intent.action.PACKAGE_CHANGED";
 
     @Override
     public void onReceive(Context context, Intent intent) {
