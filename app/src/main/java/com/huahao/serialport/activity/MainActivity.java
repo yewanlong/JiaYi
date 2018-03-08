@@ -2,7 +2,10 @@ package com.huahao.serialport.activity;
 
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -353,6 +356,13 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Subscribe
     public void onEventMainThread(EventApk event) {
+        Intent ite = new Intent(this, StartReceiver.class);
+        ite.setAction("install_and_start");
+        PendingIntent SENDER = PendingIntent.getBroadcast(this, 0, ite,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager ALARM = (AlarmManager) getSystemService(ALARM_SERVICE);
+        ALARM.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000,
+                SENDER);
         SilentInstall.install(event.getPath());
     }
 

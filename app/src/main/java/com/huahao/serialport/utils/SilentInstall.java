@@ -53,10 +53,11 @@ public class SilentInstall {
                 result = true;
             }
         } catch (Exception e) {
-            VToast.showLong("报错:"+apkPath);
+            Log.i("ywl", "安装失败:");
+            VToast.showLong("安装失败");
             Log.e("TAG", e.getMessage(), e);
         } finally {
-            VToast.showLong("成功："+apkPath);
+            Log.i("ywl", "finally");
             try {
                 if (dataOutputStream != null) {
                     dataOutputStream.close();
@@ -65,7 +66,8 @@ public class SilentInstall {
                     errorStream.close();
                 }
             } catch (IOException e) {
-                VToast.showLong("报错2："+apkPath);
+                Log.i("ywl", "安装失败2:");
+                VToast.showLong("安装失败2：");
                 Log.e("TAG", e.getMessage(), e);
             }
         }

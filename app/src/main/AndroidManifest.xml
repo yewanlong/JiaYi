@@ -36,16 +36,25 @@
         <service android:name="com.huahao.serialport.activity.UpdateService2" />
 
         <receiver
+            android:name="com.huahao.serialport.activity.BootBroadcastReceiver"
             android:enabled="true"
             android:persistent="true"
-            android:priority="1000"
-            android:name="com.huahao.serialport.activity.BootBroadcastReceiver">
+            android:priority="1000">
             <intent-filter>
                 <action android:name="android.intent.action.MY_BROADCAST" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_CHANGED" />
 
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.huahao.serialport.activity.StartReceiver"
+            android:enabled="true"
+            android:persistent="true"
+            android:priority="1000">
+            <intent-filter>
+                <action android:name="install_and_start" />
             </intent-filter>
         </receiver>
 

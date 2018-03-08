@@ -10,8 +10,17 @@ public class Tool {
     public final static int SERIAL_TYPE_WHAT_5 = 1005; //电机
     public final static int SERIAL_TYPE_WHAT_4 = 1004;
 
+    public final static int ZBJ_A = 1;
+    public final static int ZBJ_B = 2;
+    public final static int ZBJ_C = 3;
+    public final static int ZBJ_D = 4;
+    public final static int ZBJ_E = 5;
+    public final static int ZBJ_F = 6;
+    public final static int ZBJ_G = 7;
+
     public final static String MOTOR = "MOTOR";
     public final static String MOTOR_NUMBER = "MOTOR_NUMBER";
+
     public static String bytesToHexString(byte[] bArray) {
         StringBuffer sb = new StringBuffer(bArray.length);
         for (byte b : bArray) {
