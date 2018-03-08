@@ -10,6 +10,9 @@ import com.huahao.serialport.adapter.DeviceAdapter;
 import com.kongqw.serialportlibrary.Device;
 import com.kongqw.serialportlibrary.SerialPortFinder;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class SelectSerialPortActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -33,9 +36,25 @@ public class SelectSerialPortActivity extends AppCompatActivity implements Adapt
             listView.setAdapter(mDeviceAdapter);
             listView.setOnItemClickListener(this);
         }
-
+//        set(5555);
     }
-
+    protected static int set(int paramInt) throws IOException,
+            InterruptedException {
+        Process localProcess = Runtime.getRuntime().exec("su");
+        DataOutputStream localDataOutputStream = new DataOutputStream(
+                (OutputStream) localProcess.getOutputStream());
+        localDataOutputStream.writeBytes("setprop service.adb.tcp.port "
+                + paramInt + "\n");
+        localDataOutputStream.flush();
+        localDataOutputStream.writeBytes("stop adbd\n");
+        localDataOutputStream.flush();
+        localDataOutputStream.writeBytes("start adbd\n");
+        localDataOutputStream.flush();
+        localDataOutputStream.writeBytes("exit\n");
+        localDataOutputStream.flush();
+        localProcess.waitFor();
+        return localProcess.exitValue();
+    }
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Device device = mDeviceAdapter.getItem(position);

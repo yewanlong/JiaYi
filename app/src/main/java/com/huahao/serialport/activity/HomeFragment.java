@@ -71,7 +71,6 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
         orderListView = $(v, R.id.lv_order);
         tv_subtract = $(v, R.id.tv_subtract);
         tv_order_number = $(v, R.id.tv_order_number);
-        Log.i("ywl","tv_money1:"+tv_money);
     }
 
     @Override

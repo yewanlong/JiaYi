@@ -139,8 +139,7 @@ public class SerialPortManager extends SerialPort {
 
 
     private String sum_command_start(int type) {
-        byte[] data = new byte[]{(byte) 1, (byte) 1, (byte) (0), (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
-        data[1] = (byte) type;
+        byte[] data = new byte[]{(byte) 1, (byte) type, (byte) (0), (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
         return Tool.bytesToHexString(data) + Tool.Make_CRC(data);
     }
 

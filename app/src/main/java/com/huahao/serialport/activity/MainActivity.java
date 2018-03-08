@@ -160,6 +160,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
                     @Override
                     public void onDataSent(final byte[] bytes, final int what) {
+                        Log.i("ywl", "onDataSent:" + Tool.bytesToHexString(bytes));
                     }
                 }).openSerialPort(new File("/dev/ttyS1"), 9600);
         checkPermission(SELFPERMISSIONS, 199);
@@ -172,7 +173,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     private void switchReceived(byte[] bytes, int id, String SaleId) {
         Log.i("ywl", "switchReceived:" + Tool.bytesToHexString(bytes));
-        Log.i("ywl", "switchReceived2:" + new String(bytes, Charset.forName("utf-8")));
 
         switch (bytes[1]) {
             case HttpUtils.SERIAL_TYPE_4: {
@@ -294,8 +294,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Override
     protected void onDestroy() {
-        mSerialPortManager.closeSerialPort();
-        mManager.disConnect();
         super.onDestroy();
     }
 

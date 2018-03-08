@@ -149,7 +149,7 @@ public class SerialPortManager2 extends SerialPort {
                 break;
             case Tool.SERIAL_TYPE_WHAT_5: {
                 int number = map.get(Tool.MOTOR_NUMBER);
-                data = new byte[]{(byte) 1, (byte) type, (byte) number, (byte) 3, (byte) 0, (byte) 0, (byte) 0,
+                data = new byte[]{(byte) 1, (byte) type, (byte) number, (byte) 3, (byte) 2, (byte) 0, (byte) 0,
                         (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
                 break;
             }

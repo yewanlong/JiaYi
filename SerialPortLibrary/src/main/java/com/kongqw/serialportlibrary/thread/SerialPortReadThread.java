@@ -20,7 +20,7 @@ public abstract class SerialPortReadThread extends Thread {
 
     public SerialPortReadThread(InputStream inputStream) {
         mInputStream = inputStream;
-        mReadBuffer = new byte[1024];
+        mReadBuffer = new byte[20];
     }
 
     @Override
@@ -35,6 +35,7 @@ public abstract class SerialPortReadThread extends Thread {
 
                 Log.i(TAG, "run: ");
                 int size = mInputStream.read(mReadBuffer);
+                Log.i(TAG, "size: "+size);
 
                 if (-1 == size || 0 >= size) {
                     return;

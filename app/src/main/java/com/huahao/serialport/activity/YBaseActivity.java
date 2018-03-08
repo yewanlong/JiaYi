@@ -51,7 +51,6 @@ public abstract class YBaseActivity extends AppCompatActivity {
         super.onDestroy();
     }
     public void setProgressDialog(String msg) {
-        pd.setCancelable(false);
         pd.setMessage(msg);
         pd.show();
     }

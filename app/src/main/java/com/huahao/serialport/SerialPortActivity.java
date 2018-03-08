@@ -146,7 +146,6 @@ public class SerialPortActivity extends AppCompatActivity implements OnOpenSeria
 
         boolean sendBytes = mSerialPortManager.sendBytes(
                 Integer.valueOf(editTextSendContent.getText().toString()));
-        showToast(sendBytes ? "发送成功" : "发送失败");
     }
 
 
