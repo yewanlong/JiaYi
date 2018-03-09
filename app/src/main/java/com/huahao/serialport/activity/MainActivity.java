@@ -187,6 +187,11 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 } else {
                     setChannelStr("2");
                 }
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 channelLenght++;
                 if (channelLenght < channelId.length) {
                     send04(Integer.valueOf(channelId[channelLenght]));

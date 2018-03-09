@@ -24,6 +24,7 @@ public class SerialPortActivity extends AppCompatActivity implements OnOpenSeria
 
     public static final String DEVICE = "device";
     private SerialPortManager mSerialPortManager;
+    private EditText edit_query, edit_query2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,25 +35,19 @@ public class SerialPortActivity extends AppCompatActivity implements OnOpenSeria
             finish();
             return;
         }
-
-        Log.i("ywl", "file:" + device.getFile().getPath());
-//        File f = new File(file);
+        edit_query2 = findViewById(R.id.edit_query2);
+        edit_query = findViewById(R.id.edit_query);
         mSerialPortManager = new SerialPortManager();
         mSerialPortManager.setOnOpenSerialPortListener(this)
                 .setOnSerialPortDataListener(new OnSerialPortDataListener() {
                     @Override
                     public void onDataReceived(byte[] bytes) {
                         final byte[] finalBytes = bytes;
-                        String status = Tool.bytesToHexString(bytes);
-                        Log.i("ywl", "onDataReceivedCopy [ byte[] ]: "
-                                + Arrays.toString(bytes));
-                        Log.i("ywl", "status:" + status);
-                        Log.i("ywl", "str:" + new String(finalBytes, Charset.forName("utf-8")));
-
+                        final String status = Tool.bytesToHexString(bytes);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                showToast(String.format("接收\n%s", new String(finalBytes)));
+                                edit_query.setText(edit_query.getText().toString() + status + " ");
                             }
                         });
                     }
@@ -60,10 +55,11 @@ public class SerialPortActivity extends AppCompatActivity implements OnOpenSeria
                     @Override
                     public void onDataSent(byte[] bytes) {
                         final byte[] finalBytes = bytes;
+                        final String status = Tool.bytesToHexString(bytes);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                showToast(String.format("发送\n%s", finalBytes));
+                                edit_query2.setText(edit_query.getText().toString() + status + " ");
                             }
                         });
                     }
@@ -143,9 +139,12 @@ public class SerialPortActivity extends AppCompatActivity implements OnOpenSeria
             showDialog("onSend: 发送内容为 null");
             return;
         }
-
-        boolean sendBytes = mSerialPortManager.sendBytes(
-                Integer.valueOf(editTextSendContent.getText().toString()));
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        boolean sendBytes = mSerialPortManager.sendBytes(Integer.valueOf(editTextSendContent.getText().toString()));
         showToast(sendBytes ? "发送成功" : "发送失败");
     }
 
