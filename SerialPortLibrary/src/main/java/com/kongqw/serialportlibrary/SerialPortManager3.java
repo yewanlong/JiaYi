@@ -32,7 +32,7 @@ public class SerialPortManager3 extends SerialPort {
     private HandlerThread mSendingHandlerThread;
     private Handler mSendingHandler;
     private SerialPortReadThread mSerialPortReadThread;
-    private boolean isShow = true;
+    private boolean isShow = false;
 
     /**
      * 打开串口

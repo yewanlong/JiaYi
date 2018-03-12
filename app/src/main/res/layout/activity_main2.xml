@@ -34,15 +34,20 @@
 
             <Button
                 android:id="@+id/button"
-                android:layout_width="110dp"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:text="开始连接" />
 
             <Button
                 android:id="@+id/button2"
-                android:layout_width="110dp"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:text="清  空" />
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="关  闭" />
         </LinearLayout>
     </LinearLayout>
 

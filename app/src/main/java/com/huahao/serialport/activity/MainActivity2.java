@@ -25,6 +25,8 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
     private int number = 1;
     private Handler handler = new Handler();
     private Runnable mRunnable;
+    private String statusStr = "";
+    private byte[] statusByte = new byte[1024];
 
     @Override
     protected int getContentView() {
@@ -55,7 +57,6 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                edit_query.setText(edit_query.getText().toString() + Tool.bytesToHexString(bytes) + "\t");
                                 getSend(bytes);
                             }
                         });
@@ -92,6 +93,12 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
                 edit_query.setText("");
             }
         });
+        findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSerialPortManager3.closeSerialPort();
+            }
+        });
     }
 
     private void sendZbj() {
@@ -100,52 +107,79 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
     }
 
     private void getSend(final byte[] bytes) {
-        String statusStr = Tool.bytesToHexString(bytes);
-        int length = Tool.toInt(bytes[2]);
-        byte[] contentBytes = new byte[length];
-        for (int i = 3; i < length + 3; i++) {
-            contentBytes[i - 3] = bytes[i];
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        statusStr = Tool.bytesToHexString(contentBytes);
+        statusStr = statusStr + Tool.bytesToHexString(bytes);
+        if (statusStr.length() < 6) {
+            return;
+        }
+//        int length = Tool.toInt(statusStr.substring(4, 6));
+//        if (statusStr.length() < 10 + length) {
+//            return;
+//        }
+//        length = 6 + length + 4;
+        String newStr = statusStr;
+//        if (statusStr.length() != length) {
+//            newStr = statusStr.substring(0, length);
+//            statusStr = statusStr.substring(length, statusStr.length());
+//        } else {
+//            statusStr = "";
+//        }
+//        statusStr = Tool.bytesToHexString(contentBytes);
+        edit_query.setText(edit_query.getText().toString() + newStr + "\t");
+        Log.i("ywl", edit_query.getText().toString() + newStr + "\t");
         switch (number) {
             case Tool.ZBJ_A:
-                if (statusStr.substring(0, 2).equals("F0")) {
-                    number++;
-                    sendZbj();
-                }
+//                if (statusStr.substring(0, 2).equals("F0")) {
+                number++;
+                sendZbj();
+//                }
                 break;
             case Tool.ZBJ_B:
-                if (statusStr.substring(0, 2).equals("F0")) {
-                    number++;
-                    sendZbj();
-                }
+//                if (statusStr.substring(0, 2).equals("F0")) {
+                number++;
+                sendZbj();
+//                }
                 break;
             case Tool.ZBJ_C:
-                if (statusStr.substring(0, 2).equals("F0")) {
-                    number++;
-                    sendZbj();
-                }
+//                if (statusStr.substring(0, 2).equals("F0")) {
+                number++;
+                sendZbj();
+//                }
                 break;
             case Tool.ZBJ_D:
-                if (statusStr.substring(0, 2).equals("F0")) {
-                    number++;
-                    sendZbj();
-                }
+//                if (statusStr.substring(0, 2).equals("F0")) {
+                number++;
+                sendZbj();
+//                }
                 break;
             case Tool.ZBJ_E:
-                if (statusStr.substring(0, 2).equals("F0")) {
-                    number++;
-                    sendZbj();
-                }
+//                if (statusStr.substring(0, 2).equals("F0")) {
+                number++;
+                sendZbj();
+//                }
+                break;
+            case Tool.ZBJ_F:
+//                if (statusStr.substring(0, 2).equals("F0")) {
+                number++;
+                sendZbj();
+//                }
                 break;
             case Tool.ZBJ_G:
-                if (statusStr.substring(0, 2).equals("F0")) {
+//                if (statusStr.substring(0, 2).equals("F0")) {
+                if (!statusStr.equals("")) {
                     sendZbj();
-                    handler.postDelayed(mRunnable, 200);
+                    handler.postDelayed(mRunnable, 2000);
+                } else {
+                    edit_query.setText(edit_query.getText().toString() + "---------stop  " + statusStr);
                 }
+//                }
                 break;
-
         }
+        statusStr = "";
     }
 
     @Override
