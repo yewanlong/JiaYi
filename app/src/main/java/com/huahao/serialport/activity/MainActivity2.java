@@ -1,6 +1,7 @@
 package com.huahao.serialport.activity;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ import com.kongqw.serialportlibrary.listener.OnOpenSerialPortListener;
 import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener;
 
 import java.io.File;
+import java.nio.charset.Charset;
 
 /**
  * Created by Lkn on 2018/3/7.
@@ -41,6 +43,7 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
         };
     }
 
+
     @Override
     protected void initData() {
         mSerialPortManager3 = new SerialPortManager3();
@@ -52,8 +55,8 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                edit_query.setText(Tool.bytesToHexString(bytes) + "\n");
-                                getSend();
+                                edit_query.setText(edit_query.getText().toString() + Tool.bytesToHexString(bytes) + "\t");
+                                getSend(bytes);
                             }
                         });
                     }
@@ -63,11 +66,11 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                textView.setText(Tool.bytesToHexString(bytes) + "\n");
+                                textView.setText(textView.getText().toString() + Tool.bytesToHexString(bytes) + "\t");
                             }
                         });
                     }
-                }).openSerialPort(new File("/dev/ttyS1"), 9600);
+                }).openSerialPort(new File("/dev/ttyS3"), 9600);
 
     }
 
@@ -82,6 +85,13 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
                 sendZbj();
             }
         });
+        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                textView.setText("");
+                edit_query.setText("");
+            }
+        });
     }
 
     private void sendZbj() {
@@ -89,31 +99,50 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
         mSerialPortManager3.setShow();
     }
 
-    private void getSend() {
+    private void getSend(final byte[] bytes) {
+        String statusStr = Tool.bytesToHexString(bytes);
+        int length = Tool.toInt(bytes[2]);
+        byte[] contentBytes = new byte[length];
+        for (int i = 3; i < length + 3; i++) {
+            contentBytes[i - 3] = bytes[i];
+        }
+        statusStr = Tool.bytesToHexString(contentBytes);
         switch (number) {
             case Tool.ZBJ_A:
-                number++;
-                sendZbj();
+                if (statusStr.substring(0, 2).equals("F0")) {
+                    number++;
+                    sendZbj();
+                }
                 break;
             case Tool.ZBJ_B:
-                number++;
-                sendZbj();
+                if (statusStr.substring(0, 2).equals("F0")) {
+                    number++;
+                    sendZbj();
+                }
                 break;
             case Tool.ZBJ_C:
-                number++;
-                sendZbj();
+                if (statusStr.substring(0, 2).equals("F0")) {
+                    number++;
+                    sendZbj();
+                }
                 break;
             case Tool.ZBJ_D:
-                number++;
-                sendZbj();
+                if (statusStr.substring(0, 2).equals("F0")) {
+                    number++;
+                    sendZbj();
+                }
                 break;
             case Tool.ZBJ_E:
-                number++;
-                sendZbj();
+                if (statusStr.substring(0, 2).equals("F0")) {
+                    number++;
+                    sendZbj();
+                }
                 break;
             case Tool.ZBJ_G:
-                sendZbj();
-                handler.postDelayed(mRunnable, 200);
+                if (statusStr.substring(0, 2).equals("F0")) {
+                    sendZbj();
+                    handler.postDelayed(mRunnable, 200);
+                }
                 break;
 
         }
