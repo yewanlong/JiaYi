@@ -55,16 +55,15 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private ConnectionInfo mInfo;
     private OkSocketOptions mOkOptions;
     private Handler handler = new Handler();
-    private Runnable mRunnable, mRunnableSub, mRunnableCSQ;
     private long msgId = 0;
     private int channelLenght = 0;
-    private String channelStr = "";
+    private String channelStr = "", statusStr = "";
     private String[] channelId = new String[0];
     private SocketActionAdapter adapter = new SocketActionAdapter() {
 
         @Override
         public void onSocketConnectionSuccess(Context context, ConnectionInfo info, String action) {
-//            socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
+            checkPermission(SELFPERMISSIONS, 199);
         }
 
         @Override
@@ -106,6 +105,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Override
     protected void initView() {
+        Log.i("ywl", "ssssss");
 //        app.addActivity(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         homeFragment = new HomeFragment();
@@ -117,28 +117,31 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 .build();
         mManager = open(mInfo, mOkOptions);
         mManager.registerReceiver(adapter);
-        mRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mManager.connect();
-            }
-        };
-        mRunnableSub = new Runnable() {
-            @Override
-            public void run() {
-                homeFragment.subtractList();
-            }
-        };
-        mRunnableCSQ = new Runnable() {
-            @Override
-            public void run() {
-                socketSend(HttpUtils.getCSQ(msgId, HttpUtils.IMEI));
-                msgId++;
-                handler.postDelayed(mRunnableCSQ, 30000);
-            }
-        };
         mManager.connect();
     }
+
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mManager.connect();
+        }
+    };
+
+    private Runnable mRunnableSub = new Runnable() {
+        @Override
+        public void run() {
+            homeFragment.subtractList();
+        }
+    };
+
+    private Runnable mRunnableCSQ = new Runnable() {
+        @Override
+        public void run() {
+            socketSend(HttpUtils.getCSQ(msgId, HttpUtils.IMEI));
+            msgId++;
+            handler.postDelayed(mRunnableCSQ, 300000);
+        }
+    };
 
     @Override
     protected void initData() {
@@ -165,8 +168,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                     public void onDataSent(final byte[] bytes, final int what) {
                         Log.i("ywl", "onDataSent:" + Tool.bytesToHexString(bytes));
                     }
-                }).openSerialPort(new File("/dev/ttyS1"), 9600);
-        checkPermission(SELFPERMISSIONS, 199);
+                }).openSerialPort(new File("/dev/ttyS3"), 9600);
     }
 
     @Override
@@ -175,44 +177,50 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     }
 
     private void switchReceived(byte[] bytes, int id, String SaleId) {
-        Log.i("ywl", "switchReceived:" + Tool.bytesToHexString(bytes));
+        statusStr = statusStr + Tool.bytesToHexString(bytes);
+        if (statusStr.length() == 40) {
+            Log.i("ywl", "statusStr:" + Tool.bytesToHexString(bytes));
+            switch (statusStr.substring(2, 4)) {
+                case "0" + HttpUtils.SERIAL_TYPE_4: {
+                    if (statusStr.contains("AA")) {
+                        setChannelStr("0");
+                    } else if (statusStr.contains("BB")) {
+                        setChannelStr("1");
+                    } else {
+                        setChannelStr("2");
+                    }
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    channelLenght++;
+                    if (channelLenght < channelId.length) {
+                        send04(Integer.valueOf(channelId[channelLenght]));
+                    } else {
+                        dismissProgressDialog();
+                        socketSend(HttpUtils.getChannelStatus(HttpUtils.IMEI, channelStr));
+                    }
+                    break;
+                }
+                case "0" + HttpUtils.SERIAL_TYPE_5: {
+                    if (statusStr.substring(4, 6).equals("00")) {
+                        socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 1, id, SaleId, 1));
+                        homeFragment.initList2();
+                        VToast.showLong("出货成功");
+                    } else if (statusStr.substring(4, 6).equals("02") || statusStr.substring(4, 6).equals("32")) {
+                        send05(id, SaleId);
+                        VToast.showLong("电机正在运行..请稍后");
+                    } else {
+                        VToast.showLong("出货失败，正在退款，请稍后...");
+                        socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 0, id, SaleId, 0));
+                    }
+                    break;
+                }
 
-        switch (bytes[1]) {
-            case HttpUtils.SERIAL_TYPE_4: {
-                String str = Tool.bytesToHexString(bytes);
-                if (str.contains("AA")) {
-                    setChannelStr("0");
-                } else if (str.contains("BB")) {
-                    setChannelStr("1");
-                } else {
-                    setChannelStr("2");
-                }
-                channelLenght++;
-                if (channelLenght < channelId.length) {
-                    send04(Integer.valueOf(channelId[channelLenght]));
-                } else {
-                    dismissProgressDialog();
-                    socketSend(HttpUtils.getChannelStatus(HttpUtils.IMEI, channelStr));
-                }
-                break;
             }
-            case HttpUtils.SERIAL_TYPE_5: {
-                String str = Tool.bytesToHexString(bytes);
-                if (str.substring(4, 6).equals("00")) {
-                    socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 1, id, SaleId, 1));
-                    homeFragment.initList2();
-                    VToast.showLong("出货成功");
-                } else if (str.substring(4, 6).equals("02") || str.substring(4, 6).equals("32")) {
-                    send05(id, SaleId);
-                    VToast.showLong("电机正在运行..请稍后");
-                } else {
-                    VToast.showLong("出货失败，正在退款，请稍后...");
-                    socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 0, id, SaleId, 0));
-                }
-                break;
-            }
+            statusStr = "";
         }
-
     }
 
     private void setChannelStr(String id) {
@@ -260,7 +268,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     @Override
     public void onSuccess(File device) {
         VToast.showLong("串口打开成功");
-        checkPermission(SELFPERMISSIONS, 199);
     }
 
     public void checkPermission(String[] permissions, int REQUEST_FOR_PERMISSIONS) {
@@ -276,7 +283,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private void initImei() {
         HttpUtils.IMEI = CommonUtils.getSubscriberId(this);
         socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
-        handler.postDelayed(mRunnableCSQ, 5000);
+        handler.postDelayed(mRunnableCSQ, 1000);
         homeFragment.getLunbo();
         homeFragment.initList();
     }
@@ -297,6 +304,10 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Override
     protected void onDestroy() {
+        mSerialPortManager.closeSerialPort();
+        handler.removeCallbacks(mRunnableCSQ);
+        handler.removeCallbacks(mRunnable);
+        handler.removeCallbacks(mRunnableSub);
         super.onDestroy();
     }
 
@@ -307,7 +318,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 handler.removeCallbacks(mRunnableSub);
             }
             case MotionEvent.ACTION_UP: {
-                handler.postDelayed(mRunnableSub, 120000);
+                handler.postDelayed(mRunnableSub, 70000);
                 break;
             }
         }

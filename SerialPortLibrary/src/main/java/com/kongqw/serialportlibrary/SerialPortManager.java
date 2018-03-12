@@ -178,7 +178,28 @@ public class SerialPortManager extends SerialPort {
             }
         };
     }
-
+//    private void startSendThread() {
+//        // 开启发送消息的线程
+//        mSendingHandlerThread = new HandlerThread("mSendingHandlerThread");
+//        mSendingHandlerThread.start();
+//        // Handler
+//        mSendingHandler = new Handler(mSendingHandlerThread.getLooper()) {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                byte[] sendBytes = (byte[]) msg.obj;
+//                if (null != mFileOutputStream && null != sendBytes && 0 < sendBytes.length) {
+//                    try {
+//                        mFileOutputStream.write(sendBytes);
+//                        if (null != mOnSerialPortDataListener) {
+//                            mOnSerialPortDataListener.onDataSent(sendBytes);
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        };
+//    }
     /**
      * 停止发送消息线程
      */
@@ -198,15 +219,6 @@ public class SerialPortManager extends SerialPort {
         mSerialPortReadThread = new SerialPortReadThread(mFileInputStream) {
             @Override
             public void onDataReceived(byte[] bytes) {
-//                byte[] copyBytes = new byte[16];
-//                for (int i = 2; i < bytes.length - 2; i++) {
-//                    copyBytes[i - 2] = bytes[i];
-//                }
-//                Log.i("ywl", "bytes:" + Arrays.toString(bytes));
-//                Log.i(TAG, "onDataReceivedCopy [ byte[] ]: "
-//                        + Arrays.toString(copyBytes));
-//                Log.i(TAG, "onDataReceivedCopy [ String ]: "
-//                        + new String(copyBytes));
                 if (null != mOnSerialPortDataListener) {
                     mOnSerialPortDataListener.onDataReceived(bytes);
                 }

@@ -16,10 +16,6 @@ public class HandShake implements ISendable {
         this.content = content;
     }
 
-    public HandShake(Map<String, Object> content) {
-        this.content = content.toString();
-    }
-
     @Override
     public byte[] parse() {
         byte[] body = content.getBytes(Charset.defaultCharset());

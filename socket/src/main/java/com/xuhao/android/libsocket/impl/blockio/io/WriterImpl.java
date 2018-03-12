@@ -49,7 +49,7 @@ public class WriterImpl implements IWriter {
             try {
                 byte[] sendBytes = sendable.parse();
                 String str = new String(sendBytes, Charset.forName("utf-8"));
-                SL.i("str:" + str);
+                SL.i("ywl:" + str);
                 int packageSize = mOkOptions.getSendSinglePackageBytes();
                 int remainingCount = sendBytes.length;
                 ByteBuffer writeBuf = ByteBuffer.allocate(packageSize);
@@ -65,11 +65,11 @@ public class WriterImpl implements IWriter {
                     writeBuf.get(writeArr);
                     mOutputStream.write(writeArr);
                     mOutputStream.flush();
-                    byte[] forLogBytes = Arrays.copyOfRange(sendBytes, index, index + realWriteLength);
-                    if (OkSocketOptions.isDebug()) {
-                        SL.i("write bytes: " + BytesUtils.toHexStringForLog(forLogBytes));
-                        SL.i("bytes write length:" + realWriteLength);
-                    }
+//                    byte[] forLogBytes = Arrays.copyOfRange(sendBytes, index, index + realWriteLength);
+//                    if (OkSocketOptions.isDebug()) {
+//                        SL.i("write bytes: " + BytesUtils.toHexStringForLog(forLogBytes));
+//                        SL.i("bytes write length:" + realWriteLength);
+//                    }
                     index += realWriteLength;
                     remainingCount -= realWriteLength;
                 }

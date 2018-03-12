@@ -33,7 +33,11 @@ public abstract class SerialPortReadThread extends Thread {
                     return;
                 }
 
-                Log.i(TAG, "run: ");
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 int size = mInputStream.read(mReadBuffer);
                 Log.i(TAG, "size: "+size);
 

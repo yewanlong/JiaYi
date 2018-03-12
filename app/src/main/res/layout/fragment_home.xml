@@ -20,9 +20,8 @@
 
         <ListView
             android:id="@+id/listView1"
-            android:layout_width="0dp"
+            android:layout_width="220dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:divider="@color/grey"
             android:dividerHeight="1dp"
             android:scrollbars="none" />
@@ -43,7 +42,7 @@
         android:id="@+id/layout_card"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="80dp"
         android:layout_gravity="bottom"
         android:background="#515151"
         android:gravity="center_vertical"
@@ -67,7 +66,7 @@
 
         <TextView
             android:id="@+id/tv_next"
-            android:layout_width="120dp"
+            android:layout_width="160dp"
             android:layout_height="match_parent"
             android:background="@color/colorAccent"
             android:gravity="center"

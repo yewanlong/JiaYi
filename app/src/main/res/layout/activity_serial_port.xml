@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.huahao.serialport.SerialPortActivity">
+
+    <TextView
+        android:id="@+id/edit_query"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/text_hint_color"
+        android:gravity="top"
+        android:hint="接收区域" />
+
+    <TextView
+        android:id="@+id/edit_query2"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/grey"
+        android:gravity="top"
+        android:hint="发送区域" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -15,20 +32,42 @@
         <EditText
             android:id="@+id/et_send_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
+            android:layout_height="60dp"
+            android:background="@color/white"
             android:gravity="top"
+            android:hint="输入区"
             android:inputType="number"
-            android:hint="请输入发送内容，内容转 byte[] 发送"
             android:minLines="5" />
 
-        <Button
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="onSend"
-            android:text="发送" />
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onSend"
+                android:text="发送" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onClean"
+                android:text="清除" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onCleans"
+                android:text="重启" />
+        </LinearLayout>
+
 
     </LinearLayout>
 
 
-</RelativeLayout>
+</LinearLayout>

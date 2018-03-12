@@ -156,6 +156,9 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
                         if (adapter.getData().size() != 0) {
                             adapter.isTrue(0);
                             contentAdapter.setData(base.getLists().get(0).getP_list());
+                            addPrice = 0;
+                            numberThis = 0;
+                            tv_money.setText("合计：" + addPrice + "元");
                         }
                     }
                     break;

@@ -5,11 +5,12 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.huahao.serialport.utils.SilentInstall;
 import com.kongqw.serialportlibrary.Device;
 import com.kongqw.serialportlibrary.SerialPortManager;
 import com.kongqw.serialportlibrary.Tool;
@@ -17,13 +18,13 @@ import com.kongqw.serialportlibrary.listener.OnOpenSerialPortListener;
 import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener;
 
 import java.io.File;
-import java.nio.charset.Charset;
-import java.util.Arrays;
 
 public class SerialPortActivity extends AppCompatActivity implements OnOpenSerialPortListener {
 
     public static final String DEVICE = "device";
     private SerialPortManager mSerialPortManager;
+    private TextView edit_query, edit_query2;
+    private String status="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,25 +35,22 @@ public class SerialPortActivity extends AppCompatActivity implements OnOpenSeria
             finish();
             return;
         }
-
-        Log.i("ywl", "file:" + device.getFile().getPath());
-//        File f = new File(file);
+        edit_query2 = findViewById(R.id.edit_query2);
+        edit_query = (TextView) findViewById(R.id.edit_query);
         mSerialPortManager = new SerialPortManager();
         mSerialPortManager.setOnOpenSerialPortListener(this)
                 .setOnSerialPortDataListener(new OnSerialPortDataListener() {
                     @Override
                     public void onDataReceived(byte[] bytes) {
                         final byte[] finalBytes = bytes;
-                        String status = Tool.bytesToHexString(bytes);
-                        Log.i("ywl", "onDataReceivedCopy [ byte[] ]: "
-                                + Arrays.toString(bytes));
-                        Log.i("ywl", "status:" + status);
-                        Log.i("ywl", "str:" + new String(finalBytes, Charset.forName("utf-8")));
-
+                        status = status + Tool.bytesToHexString(finalBytes);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                showToast(String.format("接收\n%s", new String(finalBytes)));
+                                if (status.length() == 40) {
+                                    edit_query.setText(edit_query.getText().toString() + status + "--分割线--");
+                                    status = "";
+                                }
                             }
                         });
                     }
@@ -60,10 +58,11 @@ public class SerialPortActivity extends AppCompatActivity implements OnOpenSeria
                     @Override
                     public void onDataSent(byte[] bytes) {
                         final byte[] finalBytes = bytes;
+                        final String status = Tool.bytesToHexString(bytes);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                showToast(String.format("发送\n%s", finalBytes));
+                                edit_query2.setText(edit_query2.getText().toString() + status + "--分割线--");
                             }
                         });
                     }
@@ -143,11 +142,21 @@ public class SerialPortActivity extends AppCompatActivity implements OnOpenSeria
             showDialog("onSend: 发送内容为 null");
             return;
         }
-
-        boolean sendBytes = mSerialPortManager.sendBytes(
-                Integer.valueOf(editTextSendContent.getText().toString()));
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mSerialPortManager.sendBytes(Integer.valueOf(editTextSendContent.getText().toString()));
     }
 
+    public void onClean(View view) {
+        edit_query.setText("");
+        edit_query2.setText("");
+    }
+    public void onCleans(View view) {
+        SilentInstall.reboot();
+    }
 
     private Toast mToast;
 

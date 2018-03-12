@@ -26,7 +26,6 @@ public class CommentDialog extends Dialog implements View.OnClickListener {
     private ImageView imageView;
     private String url;
     private Handler handler = new Handler();
-    private Runnable mRunnable;
     private MyCountDownTimer mc;
 
     public CommentDialog(Context context, int theme, String url) {
@@ -40,12 +39,6 @@ public class CommentDialog extends Dialog implements View.OnClickListener {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialoag_qcode);
-        mRunnable = new Runnable() {
-            @Override
-            public void run() {
-                dismiss();
-            }
-        };
         initManager();
         initView();
         initListener();
@@ -57,7 +50,6 @@ public class CommentDialog extends Dialog implements View.OnClickListener {
         imageView = findViewById(R.id.imageView);
         mc = new MyCountDownTimer(70000, 1000);
         mc.start();
-        handler.postDelayed(mRunnable, 70000);
         imageView.setImageResource(R.mipmap.ic_friends_sends_pictures_no);
         ImageLoader.getInstance().displayImage(url, imageView, OptionsUtils.
                 options(R.mipmap.ic_friends_sends_pictures_no));
@@ -77,8 +69,6 @@ public class CommentDialog extends Dialog implements View.OnClickListener {
 
     @Override
     protected void onStop() {
-        handler.removeCallbacks(mRunnable);
-        mc.cancel();
         super.onStop();
     }
 
@@ -107,6 +97,7 @@ public class CommentDialog extends Dialog implements View.OnClickListener {
         }
 
         public void onFinish() {
+            dismiss();
         }
 
         public void onTick(long millisUntilFinished) {
