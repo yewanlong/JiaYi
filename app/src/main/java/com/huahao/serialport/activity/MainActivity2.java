@@ -1,6 +1,7 @@
 package com.huahao.serialport.activity;
 
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -95,6 +96,7 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
         findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mSerialPortManager3.setShow(true);
                 handler.removeCallbacks(mRunnable);
             }
         });
@@ -102,7 +104,6 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
 
     private void sendZbj() {
         mSerialPortManager3.sendBytes(number);
-        mSerialPortManager3.setShow();
     }
 
     private void getSend(String str, boolean isStatus) {
@@ -130,7 +131,7 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
         edit_query.setText(edit_query.getText().toString() + newStr + " ");
         if (newStr.contains("F0EF")) {
             Log.i("ywl", "有纸币进入：" + newStr);
-            textView2.setText(textView2.getText().toString()+ newStr +" ");
+            textView2.setText(textView2.getText().toString()+ newStr +"(有纸币进入)");
         }
     }
 
@@ -144,6 +145,7 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
                 }
                 break;
             default:
+                SystemClock.sleep(200);
                 number++;
                 sendZbj();
                 break;

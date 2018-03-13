@@ -32,7 +32,7 @@ public class SerialPortManager3 extends SerialPort {
     private HandlerThread mSendingHandlerThread;
     private Handler mSendingHandler;
     private SerialPortReadThread mSerialPortReadThread;
-    private boolean isShow = false;
+    private boolean isShow = true;
 
     /**
      * 打开串口
@@ -84,6 +84,10 @@ public class SerialPortManager3 extends SerialPort {
             isShow = false;
         else
             isShow = true;
+    }
+
+    public void setShow(boolean show) {
+        isShow = show;
     }
 
     /**
@@ -194,6 +198,7 @@ public class SerialPortManager3 extends SerialPort {
                     bytes = new byte[]{(byte) 0x7F, (byte) 0x00, (byte) 0x01, (byte) 0x07, (byte) 0x11, (byte) 0x88};
                 break;
         }
+        setShow();
         return bytes;
     }
 
