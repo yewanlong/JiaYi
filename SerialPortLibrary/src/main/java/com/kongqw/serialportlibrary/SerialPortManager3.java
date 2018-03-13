@@ -175,9 +175,11 @@ public class SerialPortManager3 extends SerialPort {
                 break;
             case Tool.ZBJ_E:
                 if (isShow)
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x80, (byte) 0x03, (byte) 0x02, (byte) 0xa0, (byte) 0x00, (byte) 0x22, (byte) 0xE4};
+//                    bytes = new byte[]{(byte) 0x7F, (byte) 0x80, (byte) 0x03, (byte) 0x02, (byte) 0xa0, (byte) 0x00, (byte) 0x22, (byte) 0xE4};
+                    bytes = new byte[]{(byte) 0x7F, (byte) 0x80, (byte) 0x03, (byte) 0x02, (byte) 0xff, (byte) 0x00, (byte) 0x27, (byte) 0xA6};
                 else
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x00, (byte) 0x03, (byte) 0x02, (byte) 0xa0, (byte) 0x00, (byte) 0x21, (byte) 0x58};
+//                    bytes = new byte[]{(byte) 0x7F, (byte) 0x00, (byte) 0x03, (byte) 0x02, (byte) 0xa0, (byte) 0x00, (byte) 0x21, (byte) 0x58};
+                    bytes = new byte[]{(byte) 0x7F, (byte) 0x00, (byte) 0x03, (byte) 0x02, (byte) 0xff, (byte) 0x00, (byte) 0x24, (byte) 0x1A};
                 break;
             case Tool.ZBJ_F:
                 if (isShow)
