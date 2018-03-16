@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -106,7 +107,8 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     @Override
     protected void initView() {
         app.addActivity(this);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
+        hideBottomUIMenu();
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         homeFragment = new HomeFragment();
         mSerialPortManager = new SerialPortManager2();
         mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);
@@ -366,7 +368,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Subscribe
     public void onEventMainThread(EventApk event) {
-        if(SilentInstall.install(event.getPath())){
+        if (SilentInstall.install(event.getPath())) {
             Intent ite = new Intent(this, StartReceiver.class);
             ite.setAction("install_and_start");
             PendingIntent SENDER = PendingIntent.getBroadcast(this, 0, ite,
@@ -375,7 +377,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
             ALARM.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 100,
                     SENDER);
             VToast.showLong("安装成功");
-        }else {
+        } else {
             VToast.showLong("安装失败");
         }
     }
@@ -392,6 +394,20 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 break;
             default:
                 break;
+        }
+    }
+
+    protected void hideBottomUIMenu() {
+        //隐藏虚拟按键，并且全屏
+        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
+            View v = this.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.GONE);
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            //for new api versions.
+            View decorView = getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
         }
     }
 }
