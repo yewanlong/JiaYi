@@ -36,8 +36,8 @@ public class InitApplication extends Application {
 //        LeakCanary.install(this);
         OkSocket.initialize(this, true);
         ImageLoaderUtil.initImageLoaderConfig(applicationContext);
-//        UnCeHandler catchExcep = new UnCeHandler(this);
-//        Thread.setDefaultUncaughtExceptionHandler(catchExcep);
+        UnCeHandler catchExcep = new UnCeHandler(this);
+        Thread.setDefaultUncaughtExceptionHandler(catchExcep);
     }
 
     public static InitApplication getInstance() {

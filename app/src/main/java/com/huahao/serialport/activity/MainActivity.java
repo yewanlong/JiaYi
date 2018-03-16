@@ -105,8 +105,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Override
     protected void initView() {
-        Log.i("ywl", "ssssss");
-//        app.addActivity(this);
+        app.addActivity(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         homeFragment = new HomeFragment();
         mSerialPortManager = new SerialPortManager2();
@@ -367,14 +366,18 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Subscribe
     public void onEventMainThread(EventApk event) {
-        Intent ite = new Intent(this, StartReceiver.class);
-        ite.setAction("install_and_start");
-        PendingIntent SENDER = PendingIntent.getBroadcast(this, 0, ite,
-                PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager ALARM = (AlarmManager) getSystemService(ALARM_SERVICE);
-        ALARM.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000,
-                SENDER);
-        SilentInstall.install(event.getPath());
+        if(SilentInstall.install(event.getPath())){
+            Intent ite = new Intent(this, StartReceiver.class);
+            ite.setAction("install_and_start");
+            PendingIntent SENDER = PendingIntent.getBroadcast(this, 0, ite,
+                    PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager ALARM = (AlarmManager) getSystemService(ALARM_SERVICE);
+            ALARM.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 100,
+                    SENDER);
+            VToast.showLong("安装成功");
+        }else {
+            VToast.showLong("安装失败");
+        }
     }
 
     @Override

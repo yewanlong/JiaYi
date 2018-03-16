@@ -1,7 +1,6 @@
 package com.huahao.serialport.activity;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -25,7 +24,6 @@ import com.huahao.serialport.bean.OrderData;
 import com.huahao.serialport.bean.UpdateApp;
 import com.huahao.serialport.utils.CommonUtils;
 import com.huahao.serialport.utils.ScreenUtil;
-import com.huahao.serialport.utils.SilentInstall;
 import com.huahao.serialport.utils.VToast;
 import com.huahao.serialport.volley.RequestListener;
 import com.huahao.serialport.volley.StringRequest;
@@ -115,6 +113,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
         StringRequest request = HttpUtils.getAppList(listener);
         app.addRequestQueue(1001, request, this);
     }
+
     public void initList2() {
         copyList.clear();
         addPrice = 0;
@@ -122,13 +121,14 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
         tv_money.setText("合计：" + addPrice + "元");
         initList();
     }
+
     public void getLunbo() {
         StringRequest request = HttpUtils.getLunbo(listener);
         app.addRequestQueue(1002, request, this);
     }
 
     public void getUdapte() {
-        VToast.showLong("版本号："+CommonUtils.getAppVersionCode(getActivity()));
+        VToast.showLong("版本号：" + CommonUtils.getAppVersionCode(getActivity()));
         StringRequest request = HttpUtils.getUpdate(listener, CommonUtils.getAppVersionCode(getActivity()));
         app.addRequestQueue(1005, request, this);
     }
@@ -159,6 +159,8 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
                             addPrice = 0;
                             numberThis = 0;
                             tv_money.setText("合计：" + addPrice + "元");
+                        } else {
+                            contentAdapter.setData(new ArrayList<HomeListData>());
                         }
                     }
                     break;
@@ -382,7 +384,6 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
                 break;
             case R.id.tv_next:
                 if (addPrice == 0) {
-//                    SilentInstall.reboot();
                     VToast.showLong("请选择商品");
                     return;
                 } else {
@@ -393,6 +394,9 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     public void subtractList() {
+        if(adapter.getData().size()==0){
+            return;
+        }
         for (int i = 0; i < copyList.size(); i++) {
             adapter.getData().get(copyList.get(i).getTitlePosition()).getP_list().get(copyList.get(i).getContentPosition()).setNum(0);
         }
