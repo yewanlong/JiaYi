@@ -182,13 +182,13 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     private void switchReceived(byte[] bytes, int id, String SaleId) {
         try {
-            Thread.sleep(50);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         statusStr = statusStr + Tool.bytesToHexString(bytes);
         if (statusStr.length() == 40) {
-            Log.i("ywl", "switchReceived:" + Tool.bytesToHexString(bytes));
+            Log.i("ywl", "switchReceived:" + statusStr);
             switch (statusStr.substring(2, 4)) {
                 case "0" + HttpUtils.SERIAL_TYPE_4: {
                     if (statusStr.contains("AA")) {
@@ -208,6 +208,11 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                     break;
                 }
                 case "0" + HttpUtils.SERIAL_TYPE_5: {
+                    try {
+                        Thread.sleep(3400);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     if (statusStr.substring(4, 6).equals("00")) {
                         goodsNotices.remove(0);
                         socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 1, id, SaleId, 1));
@@ -349,7 +354,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                     @Override
                     public void run() {
                         homeFragment.dialogDismiss();
-                        VToast.showLong("正在出货，请稍后...");
                     }
                 });
                 String[] ChannelIndexArray = jsonObject.getString("ChannelIndex").split(",");
