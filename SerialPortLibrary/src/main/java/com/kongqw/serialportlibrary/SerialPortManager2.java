@@ -190,7 +190,6 @@ public class SerialPortManager2 extends SerialPort {
                     try {
                         mFileOutputStream.write(send_start);
                         if (null != mOnSerialPortDataListener) {
-                            Log.d("ywl", "m_zhiling=" + m_zhiling);
                             mOnSerialPortDataListener.onDataSent(send_start, what);
                         }
                     } catch (Exception e) {

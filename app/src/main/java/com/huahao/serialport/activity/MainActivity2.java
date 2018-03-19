@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.huahao.serialport.R;
 import com.huahao.serialport.utils.VToast;
 import com.kongqw.serialportlibrary.SerialPortManager3;
@@ -21,12 +22,13 @@ import java.nio.charset.Charset;
  */
 
 public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortListener {
-    private TextView edit_query, textView,textView2;
+    private TextView edit_query, textView, textView2;
     private SerialPortManager3 mSerialPortManager3;
     private int number = 1;
     private Handler handler = new Handler();
     private Runnable mRunnable;
     private String statusStr = "";
+
     @Override
     protected int getContentView() {
         return R.layout.activity_main2;
@@ -44,7 +46,6 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
             }
         };
     }
-
 
     @Override
     protected void initData() {
@@ -131,7 +132,7 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
         edit_query.setText(edit_query.getText().toString() + newStr + " ");
         if (newStr.contains("F0EF")) {
             Log.i("ywl", "有纸币进入：" + newStr);
-            textView2.setText(textView2.getText().toString()+ newStr +"(有纸币进入)");
+            textView2.setText(textView2.getText().toString() + newStr + "(有纸币进入)");
         }
     }
 

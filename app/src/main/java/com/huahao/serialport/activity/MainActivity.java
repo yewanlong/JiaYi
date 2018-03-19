@@ -20,6 +20,7 @@ import com.huahao.serialport.HttpUtils;
 import com.huahao.serialport.NoneReconnect;
 import com.huahao.serialport.R;
 import com.huahao.serialport.bean.EventApk;
+import com.huahao.serialport.bean.GoodsNotice;
 import com.huahao.serialport.bean.HandShake;
 import com.huahao.serialport.utils.CommonUtils;
 import com.huahao.serialport.utils.SilentInstall;
@@ -40,7 +41,9 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.xuhao.android.libsocket.sdk.OkSocket.open;
@@ -60,6 +63,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private int channelLenght = 0;
     private String channelStr = "", statusStr = "";
     private String[] channelId = new String[0];
+    private List<GoodsNotice> goodsNotices = new ArrayList<>();
     private SocketActionAdapter adapter = new SocketActionAdapter() {
 
         @Override
@@ -177,9 +181,14 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     }
 
     private void switchReceived(byte[] bytes, int id, String SaleId) {
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         statusStr = statusStr + Tool.bytesToHexString(bytes);
         if (statusStr.length() == 40) {
-            Log.i("ywl", "statusStr:" + Tool.bytesToHexString(bytes));
+            Log.i("ywl", "switchReceived:" + Tool.bytesToHexString(bytes));
             switch (statusStr.substring(2, 4)) {
                 case "0" + HttpUtils.SERIAL_TYPE_4: {
                     if (statusStr.contains("AA")) {
@@ -188,11 +197,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                         setChannelStr("1");
                     } else {
                         setChannelStr("2");
-                    }
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
                     channelLenght++;
                     if (channelLenght < channelId.length) {
@@ -205,15 +209,20 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 }
                 case "0" + HttpUtils.SERIAL_TYPE_5: {
                     if (statusStr.substring(4, 6).equals("00")) {
+                        goodsNotices.remove(0);
                         socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 1, id, SaleId, 1));
-                        homeFragment.initList2();
                         VToast.showLong("出货成功");
                     } else if (statusStr.substring(4, 6).equals("02") || statusStr.substring(4, 6).equals("32")) {
-                        send05(id, SaleId);
                         VToast.showLong("电机正在运行..请稍后");
                     } else {
+                        goodsNotices.remove(0);
                         VToast.showLong("出货失败，正在退款，请稍后...");
                         socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 0, id, SaleId, 0));
+                    }
+                    if (goodsNotices.size() == 0) {
+                        homeFragment.initList2();
+                    } else {
+                        send05(Integer.valueOf(goodsNotices.get(0).getChannelIndex()), goodsNotices.get(0).getSaleId());
                     }
                     break;
                 }
@@ -343,7 +352,17 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                         VToast.showLong("正在出货，请稍后...");
                     }
                 });
-                send05(Integer.valueOf(jsonObject.getString("ChannelIndex")), jsonObject.getString("SaleId"));
+                String[] ChannelIndexArray = jsonObject.getString("ChannelIndex").split(",");
+                String[] SaleId = jsonObject.getString("SaleId").split(",");
+                if (ChannelIndexArray.length == SaleId.length) {
+                    for (int i = 0; i < ChannelIndexArray.length; i++) {
+                        GoodsNotice goodsNotice = new GoodsNotice();
+                        goodsNotice.setChannelIndex(ChannelIndexArray[i]);
+                        goodsNotice.setSaleId(SaleId[i]);
+                        goodsNotices.add(goodsNotice);
+                    }
+                }
+                send05(Integer.valueOf(goodsNotices.get(0).getChannelIndex()), goodsNotices.get(0).getSaleId());
                 break;
             case "Reboot":
                 SilentInstall.reboot();
