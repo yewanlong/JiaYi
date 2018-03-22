@@ -209,7 +209,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 }
                 case "0" + HttpUtils.SERIAL_TYPE_5: {
                     try {
-                        Thread.sleep(3400);
+                        Thread.sleep(6000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
