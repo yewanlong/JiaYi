@@ -30,7 +30,7 @@ public abstract class SerialPortReadThread extends Thread {
         while (!isInterrupted()) {
             try {
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

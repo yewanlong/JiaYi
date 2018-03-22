@@ -20,11 +20,10 @@ public class HttpUtils {
 //    protected final static int TCP_PRO = 8080;
 
     public final static int TCP_PRO_IP = TCP_PRO;
-    //命令
 
-    public final static int SERIAL_TYPE = 1; //获取序列号
     public final static int SERIAL_TYPE_5 = 5; //启动电机
     public final static int SERIAL_TYPE_4 = 4; //查看电机是否异常
+    public final static int SERIAL_TYPE_3 = 3; //poll
 
     public final static int HTTP_STATUS = 0;
 
@@ -33,7 +32,7 @@ public class HttpUtils {
 
     public static String getCheckIn(long msgId, String imei) {
         return "Action=CheckIn&Imei=" + imei + "&MsgId=" + msgId + "&Timer="
-                + new Date().getTime()+"&devicefrom=2";
+                + new Date().getTime() + "&devicefrom=2";
     }
 
     public static String getCSQ(long msgId, String imei) {
@@ -45,9 +44,11 @@ public class HttpUtils {
         return "Action=Deliver&Imei=" + imei + "&MsgId=1" + "&Timer="
                 + new Date().getTime() + "&Result=" + Result + "&ChannelIndex=" + ChannelIndex + "&SaleId=" + SaleId + "&AlarmCode=" + AlarmCode;
     }
-    public static String getChannelStatus(String imei,String ChannelStatus) {
-        return "MsgId=1&Imei="+imei+"&Action=ChannelStatus&Timer="+ new Date().getTime()+"&Index=0&ChannelStatus="+ChannelStatus;
+
+    public static String getChannelStatus(String imei, String ChannelStatus) {
+        return "MsgId=1&Imei=" + imei + "&Action=ChannelStatus&Timer=" + new Date().getTime() + "&Index=0&ChannelStatus=" + ChannelStatus;
     }
+
     public static StringRequest getAppList(RequestListener<String> listener) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("imei", IMEI);
@@ -55,13 +56,15 @@ public class HttpUtils {
                 listener);
         return request;
     }
-    public static StringRequest getUpdate(RequestListener<String> listener,int code) {
+
+    public static StringRequest getUpdate(RequestListener<String> listener, int code) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("version", code);
         StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/updateApp.do?pjson=" + jsonObject.toString(),
                 listener);
         return request;
     }
+
     public static StringRequest getLunbo(RequestListener<String> listener) {
         StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/lunbo.do",
                 listener);

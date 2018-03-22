@@ -6,7 +6,8 @@ import android.os.Message;
 import android.util.Log;
 
 import com.kongqw.serialportlibrary.listener.OnOpenSerialPortListener;
-import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener2;
+import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener;
+import com.kongqw.serialportlibrary.thread.SerialPortReadThread;
 import com.kongqw.serialportlibrary.thread.SerialPortReadThread2;
 
 import java.io.File;
@@ -28,11 +29,11 @@ public class SerialPortManager2 extends SerialPort {
     private FileOutputStream mFileOutputStream;
     private FileDescriptor mFd;
     private OnOpenSerialPortListener mOnOpenSerialPortListener;
-    private OnSerialPortDataListener2 mOnSerialPortDataListener;
+    private OnSerialPortDataListener mOnSerialPortDataListener;
 
     private HandlerThread mSendingHandlerThread;
     private Handler mSendingHandler;
-    private SerialPortReadThread2 mSerialPortReadThread;
+    private SerialPortReadThread mSerialPortReadThread;
 
     /**
      * 打开串口
@@ -133,7 +134,7 @@ public class SerialPortManager2 extends SerialPort {
      * @param listener listener
      * @return SerialPortManager
      */
-    public SerialPortManager2 setOnSerialPortDataListener(OnSerialPortDataListener2 listener) {
+    public SerialPortManager2 setOnSerialPortDataListener(OnSerialPortDataListener listener) {
         mOnSerialPortDataListener = listener;
         return this;
     }
@@ -143,20 +144,26 @@ public class SerialPortManager2 extends SerialPort {
         int type = map.get(Tool.MOTOR);
         byte[] data = new byte[0];
         switch (what) {
-            case Tool.SERIAL_TYPE_WHAT_1:
+            case Tool.SERIAL_TYPE_WHAT_1: {
                 data = new byte[]{(byte) 1, (byte) type, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
                         (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
                 break;
+            }
             case Tool.SERIAL_TYPE_WHAT_5: {
                 int number = map.get(Tool.MOTOR_NUMBER);
-                Log.i("ywl","number:"+number);
-                data = new byte[]{(byte) 1, (byte) type, (byte) number, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+                Log.i("ywl", "number:" + number);
+                data = new byte[]{(byte) 1, (byte) type, (byte) number, (byte) 3, (byte) 0, (byte) 0, (byte) 0,
                         (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
                 break;
             }
             case Tool.SERIAL_TYPE_WHAT_4: {
                 int number = map.get(Tool.MOTOR_NUMBER);
                 data = new byte[]{(byte) 1, (byte) type, (byte) number, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+                        (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+                break;
+            }
+            case Tool.SERIAL_TYPE_WHAT_3: {
+                data = new byte[]{(byte) 1, (byte) type, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
                         (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
                 break;
             }
@@ -190,7 +197,7 @@ public class SerialPortManager2 extends SerialPort {
                     try {
                         mFileOutputStream.write(send_start);
                         if (null != mOnSerialPortDataListener) {
-                            mOnSerialPortDataListener.onDataSent(send_start, what);
+                            mOnSerialPortDataListener.onDataSent(send_start);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -216,19 +223,18 @@ public class SerialPortManager2 extends SerialPort {
      * 开启接收消息的线程
      */
     public void startReadThread() {
-        mSerialPortReadThread = new SerialPortReadThread2(mFileInputStream) {
+        mSerialPortReadThread = new SerialPortReadThread(mFileInputStream) {
             @Override
-            public void onDataReceived(byte[] bytes, int what, String SaleId) {
+            public void onDataReceived(byte[] bytes) {
                 if (null != mOnSerialPortDataListener) {
-                    mOnSerialPortDataListener.onDataReceived(bytes, what, SaleId);
+                    mOnSerialPortDataListener.onDataReceived(bytes);
                 }
             }
         };
         mSerialPortReadThread.start();
     }
-    public void setWhat(int what,String saleId){
-        mSerialPortReadThread.setWhat(what,saleId);
-    }    /**
+
+    /**
      * 停止接收消息的线程
      */
     private void stopReadThread() {

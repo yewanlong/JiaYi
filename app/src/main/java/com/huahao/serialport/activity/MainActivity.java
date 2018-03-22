@@ -7,13 +7,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huahao.serialport.HttpUtils;
@@ -28,7 +28,7 @@ import com.huahao.serialport.utils.VToast;
 import com.kongqw.serialportlibrary.SerialPortManager2;
 import com.kongqw.serialportlibrary.Tool;
 import com.kongqw.serialportlibrary.listener.OnOpenSerialPortListener;
-import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener2;
+import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener;
 import com.xuhao.android.libsocket.sdk.ConnectionInfo;
 import com.xuhao.android.libsocket.sdk.OkSocketOptions;
 import com.xuhao.android.libsocket.sdk.SocketActionAdapter;
@@ -64,6 +64,8 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private String channelStr = "", statusStr = "";
     private String[] channelId = new String[0];
     private List<GoodsNotice> goodsNotices = new ArrayList<>();
+    private Button button;
+    private ArrayList<String> list = new ArrayList<>();
     private SocketActionAdapter adapter = new SocketActionAdapter() {
 
         @Override
@@ -90,6 +92,8 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
             String str = new String(data.getBodyBytes(), Charset.forName("utf-8"));
             ReadResponse(str);
             Log.i("ywl", "onSocketReadResponse:" + str);
+//            list.add("TCP：" + str);
+
         }
 
         @Override
@@ -111,7 +115,8 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     @Override
     protected void initView() {
         app.addActivity(this);
-        hideBottomUIMenu();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
+        button = findViewById(R.id.button);
         homeFragment = new HomeFragment();
         mSerialPortManager = new SerialPortManager2();
         mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);
@@ -157,22 +162,24 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     @Override
     protected void initListener() {
         mSerialPortManager.setOnOpenSerialPortListener(this)
-                .setOnSerialPortDataListener(new OnSerialPortDataListener2() {
+                .setOnSerialPortDataListener(new OnSerialPortDataListener() {
                     @Override
-                    public void onDataReceived(final byte[] bytes, final int id, final String saleId) {
+                    public void onDataReceived(final byte[] bytes) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                switchReceived(bytes, id, saleId);
+                                switchReceived(bytes);
                             }
                         });
                     }
 
                     @Override
-                    public void onDataSent(final byte[] bytes, final int what) {
+                    public void onDataSent(final byte[] bytes) {
                         Log.i("ywl", "onDataSent:" + Tool.bytesToHexString(bytes));
+//                        list.add("发送：" + Tool.bytesToHexString(bytes));
                     }
                 }).openSerialPort(new File("/dev/ttyS3"), 9600);
+        button.setOnClickListener(this);
     }
 
     @Override
@@ -180,7 +187,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         return true;
     }
 
-    private void switchReceived(byte[] bytes, int id, String SaleId) {
+    private void switchReceived(byte[] bytes) {
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -189,6 +196,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         statusStr = statusStr + Tool.bytesToHexString(bytes);
         if (statusStr.length() == 40) {
             Log.i("ywl", "switchReceived:" + statusStr);
+//            list.add("接收：" + statusStr);
             switch (statusStr.substring(2, 4)) {
                 case "0" + HttpUtils.SERIAL_TYPE_4: {
                     if (statusStr.contains("AA")) {
@@ -208,32 +216,53 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                     break;
                 }
                 case "0" + HttpUtils.SERIAL_TYPE_5: {
-                    try {
-                        Thread.sleep(6000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     if (statusStr.substring(4, 6).equals("00")) {
-                        goodsNotices.remove(0);
-                        socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 1, id, SaleId, 1));
                         VToast.showLong("出货成功");
-                    } else if (statusStr.substring(4, 6).equals("02") || statusStr.substring(4, 6).equals("32")) {
-                        VToast.showLong("电机正在运行..请稍后");
-                    } else {
+                        socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 1, Integer.valueOf(goodsNotices.get(0).getChannelIndex()),
+                                goodsNotices.get(0).getSaleId(), 1));
                         goodsNotices.remove(0);
-                        VToast.showLong("出货失败，正在退款，请稍后...");
-                        socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 0, id, SaleId, 0));
-                    }
-                    if (goodsNotices.size() == 0) {
-                        homeFragment.initList2();
+                        send03();
+                    } else if (statusStr.substring(4, 6).equals("02") || statusStr.substring(4, 6).equals("32")) {
+                        VToast.showLong("正在运行..请稍后");
+                        send03();
                     } else {
-                        send05(Integer.valueOf(goodsNotices.get(0).getChannelIndex()), goodsNotices.get(0).getSaleId());
+                        VToast.showLong("出货失败，正在退款，请稍后...");
+                        socketSend(HttpUtils.getDelive(HttpUtils.IMEI, 0, Integer.valueOf(goodsNotices.get(0).getChannelIndex()),
+                                goodsNotices.get(0).getSaleId(), 0));
+                        goodsNotices.remove(0);
+                        if (goodsNotices.size() == 0) {
+                            homeFragment.initList2();
+                        } else {
+                            send05(Integer.valueOf(goodsNotices.get(0).getChannelIndex()));
+                        }
                     }
                     break;
                 }
-
+                case "0" + HttpUtils.SERIAL_TYPE_3: {
+                    if (statusStr.substring(4, 6).equals("00")) {//空闲
+                        send();
+                    } else if (statusStr.substring(4, 6).equals("02")) {
+                        send();
+                    } else {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        send03();
+                    }
+                    break;
+                }
             }
             statusStr = "";
+        }
+    }
+
+    private void send() {
+        if (goodsNotices.size() == 0) {
+            homeFragment.initList2();
+        } else {
+            send05(Integer.valueOf(goodsNotices.get(0).getChannelIndex()));
         }
     }
 
@@ -244,12 +273,17 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
             channelStr = channelStr + id + ",";
     }
 
-    private void send05(int id, String SaleId) {
+    private void send05(int id) {
         Map<String, Integer> map = new HashMap<>();
         map.put(Tool.MOTOR, HttpUtils.SERIAL_TYPE_5);
         map.put(Tool.MOTOR_NUMBER, id);
         mSerialPortManager.sendBytes(map, Tool.SERIAL_TYPE_WHAT_5);
-        mSerialPortManager.setWhat(id, SaleId);
+    }
+
+    private void send03() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put(Tool.MOTOR, HttpUtils.SERIAL_TYPE_3);
+        mSerialPortManager.sendBytes(map, Tool.SERIAL_TYPE_WHAT_3);
     }
 
     private void send04(int id) {
@@ -257,7 +291,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         map.put(Tool.MOTOR, HttpUtils.SERIAL_TYPE_4);
         map.put(Tool.MOTOR_NUMBER, id);
         mSerialPortManager.sendBytes(map, Tool.SERIAL_TYPE_WHAT_4);
-        mSerialPortManager.setWhat(id, "");
     }
 
     private void socketSend(String tcpMap) {
@@ -271,6 +304,15 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.button:
+                if (button.getText().toString().equals("查看log")) {
+                    homeFragment.initLog(list);
+                    button.setText("关闭");
+                } else {
+                    homeFragment.initLog();
+                    button.setText("查看log");
+                }
+                break;
         }
     }
 
@@ -366,7 +408,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                         goodsNotices.add(goodsNotice);
                     }
                 }
-                send05(Integer.valueOf(goodsNotices.get(0).getChannelIndex()), goodsNotices.get(0).getSaleId());
+                send03();
                 break;
             case "Reboot":
                 SilentInstall.reboot();
@@ -417,11 +459,5 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
             default:
                 break;
         }
-    }
-
-    protected void
-
-    hideBottomUIMenu() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
     }
 }

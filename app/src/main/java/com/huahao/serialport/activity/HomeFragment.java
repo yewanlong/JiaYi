@@ -3,6 +3,7 @@ package com.huahao.serialport.activity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -44,7 +45,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
     private HomeTitleAdapter adapter;
     private HomeContentAdapter contentAdapter;
     private HomeOrderAdapter orderAdapter;
-    private ListView listView1, listView2, orderListView;
+    private ListView listView1, listView2, listView4, orderListView;
     private double addPrice = 0;
     private TextView tv_money, tv_next, tv_subtract, tv_order_number;
     private ImageView iv_cart;
@@ -69,6 +70,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
         orderListView = $(v, R.id.lv_order);
         tv_subtract = $(v, R.id.tv_subtract);
         tv_order_number = $(v, R.id.tv_order_number);
+        listView4 = $(v, R.id.listView4);
     }
 
     @Override
@@ -80,6 +82,15 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
         listView2.setAdapter(contentAdapter);
         orderListView.setAdapter(orderAdapter);
         getUdapte();
+    }
+
+    public void initLog() {
+        listView4.setVisibility(View.GONE);
+    }
+
+    public void initLog(ArrayList<String> list) {
+        listView4.setVisibility(View.VISIBLE);
+        listView4.setAdapter(new ArrayAdapter<>(getActivity(), R.layout.my_spinner, list));
     }
 
     private void initCycleView(final List<LunBoList> urlList) {
@@ -394,7 +405,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     public void subtractList() {
-        if(adapter.getData().size()==0){
+        if (adapter.getData().size() == 0) {
             return;
         }
         for (int i = 0; i < copyList.size(); i++) {
