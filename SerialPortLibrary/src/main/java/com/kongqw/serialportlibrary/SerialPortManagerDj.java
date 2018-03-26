@@ -8,7 +8,6 @@ import android.util.Log;
 import com.kongqw.serialportlibrary.listener.OnOpenSerialPortListener;
 import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener;
 import com.kongqw.serialportlibrary.thread.SerialPortReadThread;
-import com.kongqw.serialportlibrary.thread.SerialPortReadThread2;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -22,7 +21,7 @@ import java.util.Map;
  * SerialPortManager
  */
 
-public class SerialPortManager2 extends SerialPort {
+public class SerialPortManagerDj extends SerialPort {
 
     private static final String TAG = "ywl";
     private FileInputStream mFileInputStream;
@@ -123,7 +122,7 @@ public class SerialPortManager2 extends SerialPort {
      * @param listener listener
      * @return SerialPortManager
      */
-    public SerialPortManager2 setOnOpenSerialPortListener(OnOpenSerialPortListener listener) {
+    public SerialPortManagerDj setOnOpenSerialPortListener(OnOpenSerialPortListener listener) {
         mOnOpenSerialPortListener = listener;
         return this;
     }
@@ -134,7 +133,7 @@ public class SerialPortManager2 extends SerialPort {
      * @param listener listener
      * @return SerialPortManager
      */
-    public SerialPortManager2 setOnSerialPortDataListener(OnSerialPortDataListener listener) {
+    public SerialPortManagerDj setOnSerialPortDataListener(OnSerialPortDataListener listener) {
         mOnSerialPortDataListener = listener;
         return this;
     }

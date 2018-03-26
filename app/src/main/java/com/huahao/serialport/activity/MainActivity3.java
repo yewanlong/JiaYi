@@ -4,11 +4,12 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.huahao.serialport.R;
 import com.huahao.serialport.utils.VToast;
-import com.kongqw.serialportlibrary.SerialPortManagerZb;
+import com.kongqw.serialportlibrary.SerialPortManagerYb;
 import com.kongqw.serialportlibrary.Tool;
 import com.kongqw.serialportlibrary.listener.OnOpenSerialPortListener;
 import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener;
@@ -19,36 +20,28 @@ import java.io.File;
  * Created by Lkn on 2018/3/7.
  */
 
-public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortListener {
-    private TextView edit_query, textView, textView2;
-    private SerialPortManagerZb mSerialPortManager3;
-    private int number = 1;
-    private Handler handler = new Handler();
-    private Runnable mRunnable;
-    private String statusStr = "";
+public class MainActivity3 extends YBaseActivity implements OnOpenSerialPortListener {
+    private SerialPortManagerYb mSerialPortManager4;
+    private TextView textView, textView2;
+    private String statusYbj = "";
+    private EditText et_money;
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_main2;
+        return R.layout.activity_main3;
     }
 
     @Override
     protected void initView() {
-        edit_query = $(R.id.edit_query);
-        textView = findViewById(R.id.textView);
-        textView2 = findViewById(R.id.textView2);
-        mRunnable = new Runnable() {
-            @Override
-            public void run() {
-                sendZbj();
-            }
-        };
+        textView = $(R.id.textView);
+        textView2 = $(R.id.textView2);
+        et_money = $(R.id.et_money);
     }
 
     @Override
     protected void initData() {
-        mSerialPortManager3 = new SerialPortManagerZb();
-        mSerialPortManager3.setOnOpenSerialPortListener(this)
+        mSerialPortManager4 = new SerialPortManagerYb();
+        mSerialPortManager4.setOnOpenSerialPortListener(this)
                 .setOnSerialPortDataListener(new OnSerialPortDataListener() {
                     @Override
                     public void onDataReceived(final byte[] bytes) {
@@ -56,7 +49,7 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                getSend(Tool.bytesToHexString(bytes), true);
+                                getSendYbj(Tool.bytesToHexString(bytes));
                             }
                         });
                     }
@@ -80,75 +73,39 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handler.removeCallbacks(mRunnable);
-                sendZbj();
+                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager4.selectYB()) + " ");
+                mSerialPortManager4.sendBytes(mSerialPortManager4.selectYB());
             }
         });
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textView.setText("");
-                edit_query.setText("");
+                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager4.goYB(Integer.valueOf(et_money.getText().toString()))) + " ");
+                mSerialPortManager4.sendBytes(mSerialPortManager4.goYB(Integer.valueOf(et_money.getText().toString())));
             }
         });
         findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mSerialPortManager3.setShow(true);
-                handler.removeCallbacks(mRunnable);
+                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager4.selectNoYB()) + " ");
+                mSerialPortManager4.sendBytes(mSerialPortManager4.selectNoYB());
             }
         });
     }
 
-    private void sendZbj() {
-        mSerialPortManager3.sendBytes(number);
-    }
-
-    private void getSend(String str, boolean isStatus) {
-        if (isStatus) {
-            statusStr = statusStr + str;
+    private void getSendYbj(String str) {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        if (statusStr.length() < 6) {
-            sendSwitch(true);
-            return;
-        }
-        int length = (Tool.toInt(statusStr.substring(4, 6))) * 2 + 10;
-        if (statusStr.length() < length) {
-            sendSwitch(true);
-            return;
-        }
-        String newStr = statusStr;
-        if (statusStr.length() > length) {
-            newStr = statusStr.substring(0, length);
-            statusStr = statusStr.substring(length, statusStr.length());
-            sendSwitch(false);
-        } else {
-            statusStr = "";
-            sendSwitch(true);
-        }
-        edit_query.setText(edit_query.getText().toString() + newStr + " ");
-        if (newStr.contains("F0EF")) {
-            Log.i("ywl", "有纸币进入：" + newStr);
-            textView2.setText(textView2.getText().toString() + newStr + "(有纸币进入)");
+        statusYbj = statusYbj + str;
+        if (str.length() == 12) {
+            textView2.setText(textView2.getText().toString() + statusYbj + " ");
+            statusYbj = "";
         }
     }
 
-    private void sendSwitch(boolean isStatus) {
-        switch (number) {
-            case Tool.ZBJ_G:
-                if (statusStr.length() != 0 && !isStatus) {
-                    getSend(statusStr, false);
-                } else {
-                    handler.postDelayed(mRunnable, 350);
-                }
-                break;
-            default:
-                SystemClock.sleep(200);
-                number++;
-                sendZbj();
-                break;
-        }
-    }
 
     @Override
     protected boolean isApplyEventBus() {

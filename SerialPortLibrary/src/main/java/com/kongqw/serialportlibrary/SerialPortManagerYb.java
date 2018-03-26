@@ -20,7 +20,7 @@ import java.io.IOException;
  * SerialPortManager
  */
 
-public class SerialPortManager3 extends SerialPort {
+public class SerialPortManagerYb extends SerialPort {
 
     private static final String TAG = "ywl";
     private FileInputStream mFileInputStream;
@@ -32,7 +32,6 @@ public class SerialPortManager3 extends SerialPort {
     private HandlerThread mSendingHandlerThread;
     private Handler mSendingHandler;
     private SerialPortReadThread mSerialPortReadThread;
-    private boolean isShow = true;
 
     /**
      * 打开串口
@@ -79,17 +78,6 @@ public class SerialPortManager3 extends SerialPort {
         return false;
     }
 
-    public void setShow() {
-        if (isShow)
-            isShow = false;
-        else
-            isShow = true;
-    }
-
-    public void setShow(boolean show) {
-        isShow = show;
-    }
-
     /**
      * 关闭串口
      */
@@ -133,7 +121,7 @@ public class SerialPortManager3 extends SerialPort {
      * @param listener listener
      * @return SerialPortManager
      */
-    public SerialPortManager3 setOnOpenSerialPortListener(OnOpenSerialPortListener listener) {
+    public SerialPortManagerYb setOnOpenSerialPortListener(OnOpenSerialPortListener listener) {
         mOnOpenSerialPortListener = listener;
         return this;
     }
@@ -144,63 +132,11 @@ public class SerialPortManager3 extends SerialPort {
      * @param listener listener
      * @return SerialPortManager
      */
-    public SerialPortManager3 setOnSerialPortDataListener(OnSerialPortDataListener listener) {
+    public SerialPortManagerYb setOnSerialPortDataListener(OnSerialPortDataListener listener) {
         mOnSerialPortDataListener = listener;
         return this;
     }
 
-
-    private byte[] sum_command_start(int type) {
-        byte[] bytes = new byte[0];
-        switch (type) {
-            case Tool.ZBJ_A:
-                if (isShow)
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x80, (byte) 0x01, (byte) 0x11, (byte) 0x65, (byte) 0x82};
-                else
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x00, (byte) 0x01, (byte) 0x11, (byte) 0x06, (byte) 0x68};
-                break;
-            case Tool.ZBJ_B:
-                if (isShow)
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x80, (byte) 0x01, (byte) 0x05, (byte) 0x1d, (byte) 0x82};
-                else
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x00, (byte) 0x01, (byte) 0x05, (byte) 0x1E, (byte) 0x08};
-                break;
-            case Tool.ZBJ_C:
-                if (isShow)
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x80, (byte) 0x01, (byte) 0x09, (byte) 0x35, (byte) 0x82};
-                else
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x80, (byte) 0x01, (byte) 0x09, (byte) 0x03, (byte) 0x68};
-                break;
-            case Tool.ZBJ_D:
-                if (isShow)
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x80, (byte) 0x01, (byte) 0x07, (byte) 0x12, (byte) 0x02};
-                else
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x00, (byte) 0x01, (byte) 0x07, (byte) 0x11, (byte) 0x88};
-                break;
-            case Tool.ZBJ_E:
-                if (isShow)
-//                    bytes = new byte[]{(byte) 0x7F, (byte) 0x80, (byte) 0x03, (byte) 0x02, (byte) 0xa0, (byte) 0x00, (byte) 0x22, (byte) 0xE4};
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x80, (byte) 0x03, (byte) 0x02, (byte) 0xff, (byte) 0x00, (byte) 0x27, (byte) 0xA6};
-                else
-//                    bytes = new byte[]{(byte) 0x7F, (byte) 0x00, (byte) 0x03, (byte) 0x02, (byte) 0xa0, (byte) 0x00, (byte) 0x21, (byte) 0x58};
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x00, (byte) 0x03, (byte) 0x02, (byte) 0xff, (byte) 0x00, (byte) 0x24, (byte) 0x1A};
-                break;
-            case Tool.ZBJ_F:
-                if (isShow)
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x80, (byte) 0x01, (byte) 0x0A, (byte) 0x3F, (byte) 0x82};
-                else
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x00, (byte) 0x01, (byte) 0x0A, (byte) 0x3C, (byte) 0x08};
-                break;
-            case Tool.ZBJ_G:
-                if (isShow)
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x80, (byte) 0x01, (byte) 0x07, (byte) 0x12, (byte) 0x02};
-                else
-                    bytes = new byte[]{(byte) 0x7F, (byte) 0x00, (byte) 0x01, (byte) 0x07, (byte) 0x11, (byte) 0x88};
-                break;
-        }
-        setShow();
-        return bytes;
-    }
 
     /**
      * 开启发送消息的线程
@@ -213,7 +149,7 @@ public class SerialPortManager3 extends SerialPort {
         mSendingHandler = new Handler(mSendingHandlerThread.getLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                byte[] m_zhiling = sum_command_start((int) msg.obj);
+                byte[] m_zhiling = ((byte[]) msg.obj);
                 if (null != mFileOutputStream && 0 < m_zhiling.length) {
                     try {
                         mFileOutputStream.write(m_zhiling);
@@ -227,6 +163,35 @@ public class SerialPortManager3 extends SerialPort {
                 }
             }
         };
+    }
+
+    //查询硬币数量
+    public byte[] selectYB() {
+        byte[] bytes = new byte[]{(byte) 0x05, (byte) 0x10, (byte) 0x00, (byte) 0x11, (byte) 0x00, (byte) 0x00};
+        bytes[bytes.length - 1] = checkSum(bytes);
+        return bytes;
+    }
+
+    //出币
+    public byte[] goYB(int moeny) {
+        byte[] bytes = new byte[]{(byte) 0x05, (byte) 0x10, (byte) 0x00, (byte) 0x10, (byte) moeny, (byte) 0x00};
+        bytes[bytes.length - 1] = checkSum(bytes);
+        return bytes;
+    }
+
+    //查询硬币数量
+    public byte[] selectNoYB() {
+        byte[] bytes = new byte[]{(byte) 0x05, (byte) 0x10, (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x00};
+        bytes[bytes.length - 1] = checkSum(bytes);
+        return bytes;
+    }
+
+    private byte checkSum(byte[] bytes) {
+        byte by = bytes[0];
+        for (int i = 1; i < bytes.length - 1; i++) {
+            by = (byte) (by + bytes[i]);
+        }
+        return by;
     }
 
     /**
@@ -271,7 +236,7 @@ public class SerialPortManager3 extends SerialPort {
      * @param sendBytes 发送数据
      * @return 发送是否成功
      */
-    public boolean sendBytes(int sendBytes) {
+    public boolean sendBytes(byte[] sendBytes) {
         if (null != mFd && null != mFileInputStream && null != mFileOutputStream) {
             if (null != mSendingHandler) {
                 Message message = Message.obtain();

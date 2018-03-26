@@ -25,7 +25,7 @@ import com.huahao.serialport.bean.HandShake;
 import com.huahao.serialport.utils.CommonUtils;
 import com.huahao.serialport.utils.SilentInstall;
 import com.huahao.serialport.utils.VToast;
-import com.kongqw.serialportlibrary.SerialPortManager2;
+import com.kongqw.serialportlibrary.SerialPortManagerDj;
 import com.kongqw.serialportlibrary.Tool;
 import com.kongqw.serialportlibrary.listener.OnOpenSerialPortListener;
 import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener;
@@ -54,7 +54,7 @@ import static com.xuhao.android.libsocket.sdk.OkSocket.open;
 
 public class MainActivity extends YBaseActivity implements View.OnClickListener, OnOpenSerialPortListener {
     private HomeFragment homeFragment;
-    private SerialPortManager2 mSerialPortManager;
+    private SerialPortManagerDj mSerialPortManager;
     private IConnectionManager mManager;
     private ConnectionInfo mInfo;
     private OkSocketOptions mOkOptions;
@@ -118,7 +118,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         button = findViewById(R.id.button);
         homeFragment = new HomeFragment();
-        mSerialPortManager = new SerialPortManager2();
+        mSerialPortManager = new SerialPortManagerDj();
         mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);
         mOkOptions = new OkSocketOptions.Builder(OkSocketOptions.getDefault())
                 .setReconnectionManager(new NoneReconnect())
