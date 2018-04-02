@@ -132,8 +132,12 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     public void initList() {
-        StringRequest request = HttpUtils.getAppList(listener);
-        app.addRequestQueue(1001, request, this);
+        if (CommonUtils.isNetWorkConnected(getActivity())) {
+            StringRequest request = HttpUtils.getAppList(listener);
+            app.addRequestQueue(1001, request, this);
+        } else {
+            VToast.showLong("网络异常");
+        }
     }
 
     public void initList2() {

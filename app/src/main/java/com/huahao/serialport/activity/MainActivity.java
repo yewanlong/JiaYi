@@ -115,6 +115,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     @Override
     protected void initView() {
         app.addActivity(this);
+        Log.i("ywl", "进入");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         button = findViewById(R.id.button);
         homeFragment = new HomeFragment();
@@ -361,9 +362,11 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     @Override
     protected void onDestroy() {
         mSerialPortManager.closeSerialPort();
+        mManager.disConnect();
         handler.removeCallbacks(mRunnableCSQ);
         handler.removeCallbacks(mRunnable);
         handler.removeCallbacks(mRunnableSub);
+        finish();
         super.onDestroy();
     }
 
