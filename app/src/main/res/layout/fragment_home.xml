@@ -36,6 +36,16 @@
             android:dividerHeight="1dp" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/textView"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:background="@color/colorAccent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:visibility="gone" />
+
     <include layout="@layout/include_home_order" />
 
     <LinearLayout

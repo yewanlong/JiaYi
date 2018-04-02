@@ -25,7 +25,7 @@
         tools:replace="android:label">
 
         <activity
-            android:name="com.huahao.serialport.activity.MainActivity3"
+            android:name="com.huahao.serialport.activity.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>

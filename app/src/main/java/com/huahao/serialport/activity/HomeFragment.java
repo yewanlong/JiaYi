@@ -47,7 +47,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
     private HomeOrderAdapter orderAdapter;
     private ListView listView1, listView2, listView4, orderListView;
     private double addPrice = 0;
-    private TextView tv_money, tv_next, tv_subtract, tv_order_number;
+    private TextView tv_money, tv_next, tv_subtract, tv_order_number, textView;
     private ImageView iv_cart;
     private int numberThis = 0, titlePosition;
     private List<HomeListData> copyList = new ArrayList<>();
@@ -64,6 +64,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
         listView1 = $(v, R.id.listView1);
         listView2 = $(v, R.id.listView2);
         tv_money = $(v, R.id.tv_money);
+        textView = $(v, R.id.textView);
         iv_cart = $(v, R.id.iv_cart);
         tv_next = $(v, R.id.tv_next);
         layout_order = $(v, R.id.layout_order);
@@ -118,6 +119,16 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
         tv_next.setOnClickListener(this);
         layout_order.setOnClickListener(this);
         tv_subtract.setOnClickListener(this);
+        tv_money.setOnClickListener(this);
+        textView.setOnClickListener(this);
+        tv_money.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                textView.setVisibility(View.VISIBLE);
+                textView.setText(HttpUtils.IMEI);
+                return false;
+            }
+        });
     }
 
     public void initList() {
@@ -400,6 +411,12 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
                 } else {
                     getOrder();
                 }
+                break;
+            case R.id.textView:
+                textView.setVisibility(View.GONE);
+                break;
+            case R.id.tv_money:
+                textView.setVisibility(View.GONE);
                 break;
         }
     }
