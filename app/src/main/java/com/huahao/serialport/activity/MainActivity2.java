@@ -17,6 +17,7 @@ import java.io.File;
 
 /**
  * Created by Lkn on 2018/3/7.
+ * 纸币机
  */
 
 public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortListener {

@@ -1,8 +1,5 @@
 package com.huahao.serialport.activity;
 
-import android.os.Handler;
-import android.os.SystemClock;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,6 +15,7 @@ import java.io.File;
 
 /**
  * Created by Lkn on 2018/3/7.
+ * 硬币机
  */
 
 public class MainActivity3 extends YBaseActivity implements OnOpenSerialPortListener {
