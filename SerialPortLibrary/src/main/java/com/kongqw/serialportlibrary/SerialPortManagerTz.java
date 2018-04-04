@@ -150,7 +150,6 @@ public class SerialPortManagerTz extends SerialPort {
             @Override
             public void handleMessage(Message msg) {
                 byte[] m_zhiling = ((byte[]) msg.obj);
-                Log.d("sum_command_start", "m_zhiling=" + Tool.bytesToHexString(m_zhiling));
                 if (null != mFileOutputStream && 0 < m_zhiling.length) {
                     try {
                         mFileOutputStream.write(m_zhiling);

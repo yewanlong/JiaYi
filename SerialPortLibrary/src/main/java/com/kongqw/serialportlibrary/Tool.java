@@ -33,7 +33,18 @@ public class Tool {
         }
         return sb.toString();
     }
-
+    public static byte[] decode(String src) {
+        int m = 0, n = 0;
+        int byteLen = src.length() / 2; // 每两个字符描述一个字节
+        byte[] ret = new byte[byteLen];
+        for (int i = 0; i < byteLen; i++) {
+            m = i * 2 + 1;
+            n = m + 1;
+            int intVal = Integer.decode("0x" + src.substring(i * 2, m) + src.substring(m, n));
+            ret[i] = Byte.valueOf((byte)intVal);
+        }
+        return ret;
+    }
     public static void printHexString(byte[] b) {
         for (byte b2 : b) {
             String hex = Integer.toHexString(b2 & MotionEventCompat.ACTION_MASK);

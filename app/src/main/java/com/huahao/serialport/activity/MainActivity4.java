@@ -1,7 +1,8 @@
 package com.huahao.serialport.activity;
 
+import android.os.SystemClock;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.EditText;
 
 import com.huahao.serialport.R;
 import com.huahao.serialport.utils.VToast;
@@ -11,7 +12,6 @@ import com.kongqw.serialportlibrary.listener.OnOpenSerialPortListener;
 import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 
 /**
  * Created by Lkn on 2018/3/7.
@@ -20,7 +20,8 @@ import java.io.UnsupportedEncodingException;
 
 public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortListener {
     private SerialPortManagerTz mSerialPortManager;
-    private TextView textView, textView2;
+    private EditText textView, textView2;
+    private String statusStr = "";
 
     @Override
     protected int getContentView() {
@@ -43,15 +44,7 @@ public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortList
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                VToast.showLong("收到数据了噢");
-                                try {
-                                    String srt2 = new String(bytes, "UTF-8");
-                                    textView2.setText(textView2.getText().toString() + srt2 + " ");
-                                } catch (UnsupportedEncodingException e) {
-                                    VToast.showLong("转String报错");
-                                    e.printStackTrace();
-                                }
-//                                getSendYbj(Tool.bytesToHexString(bytes));
+                                getSendYbj(Tool.bytesToHexString(bytes));
                             }
                         });
                     }
@@ -63,51 +56,70 @@ public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortList
 
     }
 
+    private void getSendYbj(String str) {
+        textView.setText(textView.getText().toString() + str + " ");
+        statusStr = statusStr + str;
+        if (statusStr.length() == 14) {
+            textView2.setText(textView2.getText().toString() + statusStr + " ");
+            statusStr = "";
+        } else if (statusStr.length() > 14) {
+            String newStr = statusStr.substring(0, 14);
+            textView2.setText(textView2.getText().toString() + newStr + " ");
+            statusStr = statusStr.substring(14, statusStr.length());
+        }
+    }
 
     @Override
     protected void initListener() {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select()) + " ");
+                SystemClock.sleep(350);
+//                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select()) + " ");
                 mSerialPortManager.sendBytes(mSerialPortManager.select());
             }
         });
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select1()) + " ");
+                SystemClock.sleep(350);
+//                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select1()) + " ");
                 mSerialPortManager.sendBytes(mSerialPortManager.select1());
             }
         });
         findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select2()) + " ");
+                SystemClock.sleep(350);
+//                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select2()) + " ");
                 mSerialPortManager.sendBytes(mSerialPortManager.select2());
             }
         });
         findViewById(R.id.button4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select3()) + " ");
+                SystemClock.sleep(350);
+//                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select3()) + " ");
                 mSerialPortManager.sendBytes(mSerialPortManager.select3());
             }
         });
         findViewById(R.id.button5).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select4()) + " ");
+                SystemClock.sleep(350);
+//                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select4()) + " ");
                 mSerialPortManager.sendBytes(mSerialPortManager.select4());
             }
         });
         findViewById(R.id.button6).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select5()) + " ");
-                mSerialPortManager.sendBytes(mSerialPortManager.select4());
+                SystemClock.sleep(350);
+//                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select5()) + " ");
+                mSerialPortManager.sendBytes(mSerialPortManager.select5());
             }
         });
+
     }
 
 
