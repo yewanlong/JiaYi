@@ -44,4 +44,5 @@ public class SerialPort {
 
     // 关闭串口
     protected native void close();
+
 }
