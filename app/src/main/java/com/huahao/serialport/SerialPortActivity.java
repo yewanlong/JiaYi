@@ -35,7 +35,7 @@ public class SerialPortActivity extends AppCompatActivity implements OnOpenSeria
             finish();
             return;
         }
-        edit_query2 = findViewById(R.id.edit_query2);
+        edit_query2 = (TextView) findViewById(R.id.edit_query2);
         edit_query = (TextView) findViewById(R.id.edit_query);
         mSerialPortManager = new SerialPortManager();
         mSerialPortManager.setOnOpenSerialPortListener(this)

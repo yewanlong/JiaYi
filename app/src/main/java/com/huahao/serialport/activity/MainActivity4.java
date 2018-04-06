@@ -51,13 +51,18 @@ public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortList
 
                     @Override
                     public void onDataSent(final byte[] bytes) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                textView.setText(textView.getText().toString() + Tool.bytesToHexString(bytes) + " ");
+                            }
+                        });
                     }
                 }).openSerialPort(new File("/dev/ttyS3"), 9600);
 
     }
 
     private void getSendYbj(String str) {
-        textView.setText(textView.getText().toString() + str + " ");
         statusStr = statusStr + str;
         if (statusStr.length() == 14) {
             textView2.setText(textView2.getText().toString() + statusStr + " ");
@@ -75,7 +80,6 @@ public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortList
             @Override
             public void onClick(View view) {
                 SystemClock.sleep(350);
-//                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select()) + " ");
                 mSerialPortManager.sendBytes(mSerialPortManager.select());
             }
         });
@@ -83,7 +87,6 @@ public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortList
             @Override
             public void onClick(View view) {
                 SystemClock.sleep(350);
-//                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select1()) + " ");
                 mSerialPortManager.sendBytes(mSerialPortManager.select1());
             }
         });
@@ -91,7 +94,6 @@ public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortList
             @Override
             public void onClick(View view) {
                 SystemClock.sleep(350);
-//                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select2()) + " ");
                 mSerialPortManager.sendBytes(mSerialPortManager.select2());
             }
         });
@@ -99,7 +101,6 @@ public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortList
             @Override
             public void onClick(View view) {
                 SystemClock.sleep(350);
-//                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select3()) + " ");
                 mSerialPortManager.sendBytes(mSerialPortManager.select3());
             }
         });
@@ -107,7 +108,6 @@ public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortList
             @Override
             public void onClick(View view) {
                 SystemClock.sleep(350);
-//                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select4()) + " ");
                 mSerialPortManager.sendBytes(mSerialPortManager.select4());
             }
         });
@@ -115,7 +115,6 @@ public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortList
             @Override
             public void onClick(View view) {
                 SystemClock.sleep(350);
-//                textView.setText(textView.getText().toString() + Tool.bytesToHexString(mSerialPortManager.select5()) + " ");
                 mSerialPortManager.sendBytes(mSerialPortManager.select5());
             }
         });

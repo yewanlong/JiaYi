@@ -36,8 +36,8 @@ public class MainActivity2 extends YBaseActivity implements OnOpenSerialPortList
     @Override
     protected void initView() {
         edit_query = $(R.id.edit_query);
-        textView = findViewById(R.id.textView);
-        textView2 = findViewById(R.id.textView2);
+        textView = (TextView) findViewById(R.id.textView);
+        textView2 = (TextView) findViewById(R.id.textView2);
         mRunnable = new Runnable() {
             @Override
             public void run() {

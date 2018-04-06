@@ -117,7 +117,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         app.addActivity(this);
         Log.i("ywl", "进入");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
-        button = findViewById(R.id.button);
+        button = (Button) findViewById(R.id.button);
         homeFragment = new HomeFragment();
         mSerialPortManager = new SerialPortManagerDj();
         mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);

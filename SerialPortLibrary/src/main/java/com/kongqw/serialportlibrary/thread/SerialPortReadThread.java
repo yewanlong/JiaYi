@@ -29,26 +29,23 @@ public abstract class SerialPortReadThread extends Thread {
 
         while (!isInterrupted()) {
             try {
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
                 if (null == mInputStream) {
                     return;
                 }
                 int size = mInputStream.read(mReadBuffer);
-                Log.i(TAG, "size: "+size);
 
-                if (-1 == size || 0 >= size) {
-                    return;
+                if (size > 0) {
+                    byte[] readBytes = new byte[size];
+                    Log.i(TAG, "size: " + size);
+                    System.arraycopy(mReadBuffer, 0, readBytes, 0, size);
+                    onDataReceived(readBytes);
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-
-                byte[] readBytes = new byte[size];
-
-                System.arraycopy(mReadBuffer, 0, readBytes, 0, size);
-                onDataReceived(readBytes);
-
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -56,10 +53,6 @@ public abstract class SerialPortReadThread extends Thread {
         }
     }
 
-    @Override
-    public synchronized void start() {
-        super.start();
-    }
 
     /**
      * 关闭线程 释放资源

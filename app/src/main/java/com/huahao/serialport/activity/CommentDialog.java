@@ -46,8 +46,8 @@ public class CommentDialog extends Dialog implements View.OnClickListener {
 
     private void initView() {
         tv_close = (TextView) findViewById(R.id.tv_close);
-        tv_content = findViewById(R.id.tv_content);
-        imageView = findViewById(R.id.imageView);
+        tv_content = (TextView) findViewById(R.id.tv_content);
+        imageView = (ImageView) findViewById(R.id.imageView);
         mc = new MyCountDownTimer(70000, 1000);
         mc.start();
         imageView.setImageResource(R.mipmap.ic_friends_sends_pictures_no);
