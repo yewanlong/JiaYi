@@ -116,7 +116,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     @Override
     protected void initView() {
         app.addActivity(this);
-        Log.i("ywl", "进入");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         button = (Button) findViewById(R.id.button);
         homeFragment = new HomeFragment();
