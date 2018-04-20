@@ -26,7 +26,7 @@
 
         <activity
             android:name="com.huahao.serialport.activity.MainActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

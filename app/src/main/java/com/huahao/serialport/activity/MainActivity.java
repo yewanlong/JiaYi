@@ -54,7 +54,7 @@ import static com.xuhao.android.libsocket.sdk.OkSocket.open;
  */
 
 public class MainActivity extends YBaseActivity implements View.OnClickListener, OnOpenSerialPortListener {
-    private HomeFragment homeFragment;
+    private HomeFragment2 homeFragment;
     private SerialPortManagerDj mSerialPortManager;
     private IConnectionManager mManager;
     private ConnectionInfo mInfo;
@@ -118,7 +118,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         app.addActivity(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         button = (Button) findViewById(R.id.button);
-        homeFragment = new HomeFragment();
+        homeFragment = new HomeFragment2();
         mSerialPortManager = new SerialPortManagerDj();
         mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);
         mOkOptions = new OkSocketOptions.Builder(OkSocketOptions.getDefault())
