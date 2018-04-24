@@ -54,7 +54,7 @@ public class UnCeHandler implements UncaughtExceptionHandler {
      * @param ex
      * @return true:如果处理了该异常信息;否则返回false.
      */
-    private boolean handleException(Throwable ex) {
+    private boolean handleException(final Throwable ex) {
         if (ex == null) {
             return false;
         }
@@ -63,7 +63,7 @@ public class UnCeHandler implements UncaughtExceptionHandler {
             @Override
             public void run() {
                 Looper.prepare();
-                Toast.makeText(application.getApplicationContext(), "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(application.getApplicationContext(), "很抱歉,程序出现异常,即将退出."+ex.getMessage(), Toast.LENGTH_LONG).show();
                 Looper.loop();
             }
         }.start();

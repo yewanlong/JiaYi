@@ -1,6 +1,8 @@
 package com.huahao.serialport.activity;
 
 import android.os.SystemClock;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 
@@ -44,7 +46,7 @@ public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortList
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                getSendYbj(Tool.bytesToHexString(bytes));
+                                textView2.setText(textView2.getText().toString() + new String(bytes));
                             }
                         });
                     }
@@ -60,18 +62,6 @@ public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortList
                     }
                 }).openSerialPort(new File("/dev/ttyS3"), 9600);
 
-    }
-
-    private void getSendYbj(String str) {
-        statusStr = statusStr + str;
-        if (statusStr.length() == 14) {
-            textView2.setText(textView2.getText().toString() + statusStr + " ");
-            statusStr = "";
-        } else if (statusStr.length() > 14) {
-            String newStr = statusStr.substring(0, 14);
-            textView2.setText(textView2.getText().toString() + newStr + " ");
-            statusStr = statusStr.substring(14, statusStr.length());
-        }
     }
 
     @Override
@@ -144,5 +134,20 @@ public class MainActivity4 extends YBaseActivity implements OnOpenSerialPortList
                 VToast.showLong("串口打开失败");
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i("ywl", "onDestroy");
+        mSerialPortManager.closeSerialPort();
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            moveTaskToBack(true);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

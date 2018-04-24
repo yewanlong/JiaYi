@@ -6,8 +6,8 @@ android {
         applicationId "com.huahao.serialport"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 3
-        versionName "3.0"
+        versionCode 4
+        versionName "4.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -39,6 +39,7 @@ dependencies {
 //    compile 'com.tonystark.android:socket:1.2.0'
     compile 'org.greenrobot:eventbus:3.0.0'
     testCompile 'junit:junit:4.12'
+    compile 'com.umeng.analytics:analytics:latest.integration'
 //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
 //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 }

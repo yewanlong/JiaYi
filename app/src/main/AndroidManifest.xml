@@ -25,8 +25,9 @@
         tools:replace="android:label">
 
         <activity
-            android:name="com.huahao.serialport.activity.MainActivity4"
-            android:launchMode="singleTask">
+            android:name="com.huahao.serialport.activity.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -61,7 +62,9 @@
         <activity android:name="com.huahao.serialport.SerialPortActivity" />
         <activity android:name="com.huahao.serialport.gpio.GpioActivity1" />
         <activity android:name="com.huahao.serialport.gpio.GpioActivity2" />
-
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5adee8a1b27b0a3f4c000105" />
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.huahao.serialport"

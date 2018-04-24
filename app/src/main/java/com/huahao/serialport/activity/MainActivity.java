@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -65,7 +66,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private String[] channelId = new String[0];
     private List<GoodsNotice> goodsNotices = new ArrayList<>();
     private Button button;
-    private ArrayList<String> list = new ArrayList<>();
     private SocketActionAdapter adapter = new SocketActionAdapter() {
 
         @Override
@@ -115,7 +115,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     @Override
     protected void initView() {
         app.addActivity(this);
-        Log.i("ywl", "进入");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         button = (Button) findViewById(R.id.button);
         homeFragment = new HomeFragment();
@@ -210,9 +209,11 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                     channelLenght++;
                     if (channelLenght < channelId.length) {
                         send04(Integer.valueOf(channelId[channelLenght]));
-                    } else {
+                    } else if (channelLenght == channelId.length) {
                         dismissProgressDialog();
                         socketSend(HttpUtils.getChannelStatus(HttpUtils.IMEI, channelStr));
+                    }else {
+                        dismissProgressDialog();
                     }
                     break;
                 }
@@ -307,7 +308,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         switch (view.getId()) {
             case R.id.button:
                 if (button.getText().toString().equals("查看log")) {
-                    homeFragment.initLog(list);
+//                    homeFragment.initLog(list);
                     button.setText("关闭");
                 } else {
                     homeFragment.initLog();
@@ -366,8 +367,15 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         handler.removeCallbacks(mRunnableCSQ);
         handler.removeCallbacks(mRunnable);
         handler.removeCallbacks(mRunnableSub);
-        finish();
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            moveTaskToBack(true);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
