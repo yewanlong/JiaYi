@@ -54,7 +54,7 @@ import static com.xuhao.android.libsocket.sdk.OkSocket.open;
  */
 
 public class MainActivity extends YBaseActivity implements View.OnClickListener, OnOpenSerialPortListener {
-    private HomeFragment2 homeFragment;
+    private HomeFragment homeFragment;
     private SerialPortManagerDj mSerialPortManager;
     private IConnectionManager mManager;
     private ConnectionInfo mInfo;
@@ -66,7 +66,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private String[] channelId = new String[0];
     private List<GoodsNotice> goodsNotices = new ArrayList<>();
     private Button button;
-    private ArrayList<String> list = new ArrayList<>();
     private SocketActionAdapter adapter = new SocketActionAdapter() {
 
         @Override
@@ -118,7 +117,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         app.addActivity(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         button = (Button) findViewById(R.id.button);
-        homeFragment = new HomeFragment2();
+        homeFragment = new HomeFragment();
         mSerialPortManager = new SerialPortManagerDj();
         mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);
         mOkOptions = new OkSocketOptions.Builder(OkSocketOptions.getDefault())
@@ -210,9 +209,11 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                     channelLenght++;
                     if (channelLenght < channelId.length) {
                         send04(Integer.valueOf(channelId[channelLenght]));
-                    } else {
+                    } else if (channelLenght == channelId.length) {
                         dismissProgressDialog();
                         socketSend(HttpUtils.getChannelStatus(HttpUtils.IMEI, channelStr));
+                    }else {
+                        dismissProgressDialog();
                     }
                     break;
                 }
@@ -307,7 +308,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         switch (view.getId()) {
             case R.id.button:
                 if (button.getText().toString().equals("查看log")) {
-                    homeFragment.initLog(list);
+//                    homeFragment.initLog(list);
                     button.setText("关闭");
                 } else {
                     homeFragment.initLog();
@@ -366,7 +367,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         handler.removeCallbacks(mRunnableCSQ);
         handler.removeCallbacks(mRunnable);
         handler.removeCallbacks(mRunnableSub);
-        finish();
         super.onDestroy();
     }
 

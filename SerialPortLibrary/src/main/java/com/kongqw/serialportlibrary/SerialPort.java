@@ -7,7 +7,7 @@ import java.io.IOException;
 public class SerialPort {
 
     static {
-        System.loadLibrary("native-lib");
+        System.loadLibrary("SerialPort");
     }
 
     private static final String TAG = SerialPort.class.getSimpleName();
@@ -40,7 +40,7 @@ public class SerialPort {
     }
 
     // 打开串口
-    protected native FileDescriptor open(String path, int baudRate);
+//    protected native FileDescriptor open(String path, int baudRate);
 
     protected native FileDescriptor open(String path, int baudRate, int databits, int stopbits, char parity);
 
