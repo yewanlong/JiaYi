@@ -66,6 +66,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private String[] channelId = new String[0];
     private List<GoodsNotice> goodsNotices = new ArrayList<>();
     private Button button;
+//    private ArrayList<String> list = new ArrayList<>();
     private SocketActionAdapter adapter = new SocketActionAdapter() {
 
         @Override
