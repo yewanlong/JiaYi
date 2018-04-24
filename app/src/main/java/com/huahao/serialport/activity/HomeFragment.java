@@ -174,63 +174,69 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
     public RequestListener<String> listener = new RequestListener<String>() {
         @Override
         protected void onSuccess(int what, String response) {
-            switch (what) {
-                case 1001:
-                    HomeBean base = JSON.parseObject(response, HomeBean.class);
-                    if (base.getStatus() == HttpUtils.HTTP_STATUS) {
-                        adapter.setData(base.getLists());
-                        if (adapter.getData().size() != 0) {
-                            adapter.isTrue(0);
-                            contentAdapter.setData(base.getLists().get(0).getP_list());
-                            addPrice = 0;
-                            numberThis = 0;
-                            tv_money.setText("合计：" + addPrice + "元");
-                        } else {
-                            contentAdapter.setData(new ArrayList<HomeListData>());
-                        }
-                    }
-                    break;
-                case 1002:
-                    LunBoBean lunBoBean = JSON.parseObject(response, LunBoBean.class);
-                    if (lunBoBean.getStatus() == HttpUtils.HTTP_STATUS) {
-                        if (lunBoBean.getLunbo().size() != 0) {
-                            initCycleView(lunBoBean.getLunbo());
-                        } else {
-                            cycleView.setVisibility(View.GONE);
-                        }
-                    }
-                    break;
-                case 1003:
-                    HomeOrder homeOrder = JSON.parseObject(response, HomeOrder.class);
-                    if (homeOrder.getStatus() == HttpUtils.HTTP_STATUS) {
-                        getOrder2(homeOrder.getResult().getOid());
-                    } else {
-                        dismissProgressDialog();
-                        VToast.showLong(homeOrder.getReason());
-                    }
-                    break;
-                case 1004:
-                    OrderData orderData = JSON.parseObject(response, OrderData.class);
-                    if (orderData.getStatus() == HttpUtils.HTTP_STATUS) {
-                        dismissProgressDialog();
-                        showCommentDialog(orderData.getQr_code());
-                    } else {
-                        dismissProgressDialog();
-                        VToast.showLong(orderData.getReason());
-                    }
-                    break;
-                case 1005:
-                    UpdateApp updateApp = JSON.parseObject(response, UpdateApp.class);
-                    if (updateApp.getStatus() == HttpUtils.HTTP_STATUS) {
-                        if (!TextUtils.isEmpty(updateApp.getApk_url()) && !"".equals(updateApp.getApk_url())) {
-                            UpdateService2.Builder.create(updateApp.getApk_url())
-                                    .build(getActivity());
+            try {
 
+                switch (what) {
+                    case 1001:
+                        HomeBean base = JSON.parseObject(response, HomeBean.class);
+                        if (base.getStatus() == HttpUtils.HTTP_STATUS) {
+                            adapter.setData(base.getLists());
+                            if (adapter.getData().size() != 0) {
+                                adapter.isTrue(0);
+                                contentAdapter.setData(base.getLists().get(0).getP_list());
+                                addPrice = 0;
+                                numberThis = 0;
+                                tv_money.setText("合计：" + addPrice + "元");
+                            } else {
+                                contentAdapter.setData(new ArrayList<HomeListData>());
+                            }
                         }
-                    }
-                    break;
-                default:
-                    break;
+                        break;
+                    case 1002:
+                        LunBoBean lunBoBean = JSON.parseObject(response, LunBoBean.class);
+                        if (lunBoBean.getStatus() == HttpUtils.HTTP_STATUS) {
+                            if (lunBoBean.getLunbo().size() != 0) {
+                                initCycleView(lunBoBean.getLunbo());
+                            } else {
+                                cycleView.setVisibility(View.GONE);
+                            }
+                        }
+                        break;
+                    case 1003:
+                        HomeOrder homeOrder = JSON.parseObject(response, HomeOrder.class);
+                        if (homeOrder.getStatus() == HttpUtils.HTTP_STATUS) {
+                            getOrder2(homeOrder.getResult().getOid());
+                        } else {
+                            dismissProgressDialog();
+                            VToast.showLong(homeOrder.getReason());
+                        }
+                        break;
+                    case 1004:
+                        OrderData orderData = JSON.parseObject(response, OrderData.class);
+                        if (orderData.getStatus() == HttpUtils.HTTP_STATUS) {
+                            dismissProgressDialog();
+                            showCommentDialog(orderData.getQr_code());
+                        } else {
+                            dismissProgressDialog();
+                            VToast.showLong(orderData.getReason());
+                        }
+                        break;
+                    case 1005:
+                        UpdateApp updateApp = JSON.parseObject(response, UpdateApp.class);
+                        if (updateApp.getStatus() == HttpUtils.HTTP_STATUS) {
+                            if (!TextUtils.isEmpty(updateApp.getApk_url()) && !"".equals(updateApp.getApk_url())) {
+                                UpdateService2.Builder.create(updateApp.getApk_url())
+                                        .build(getActivity());
+
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+            } catch (Exception e) {
+                VToast.showLong("JSON错误日志："+e.getMessage());
             }
         }
 
