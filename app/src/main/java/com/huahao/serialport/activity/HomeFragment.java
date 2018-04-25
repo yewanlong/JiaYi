@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.huahao.serialport.HttpUtils;
@@ -236,7 +237,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
                 }
 
             } catch (Exception e) {
-                VToast.showLong("JSON错误日志："+e.getMessage());
+                VToast.showLong("JSON错误日志：" + e.getMessage());
             }
         }
 
@@ -423,7 +424,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
                 }
                 break;
             case R.id.textView:
-                textView.setVisibility(View.GONE);
+                System.exit(0);//正常退出App
                 break;
             case R.id.tv_money:
                 textView.setVisibility(View.GONE);
