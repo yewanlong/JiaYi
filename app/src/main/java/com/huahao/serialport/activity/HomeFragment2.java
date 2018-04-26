@@ -441,7 +441,7 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
                 }
                 break;
             case R.id.textView:
-                textView.setVisibility(View.GONE);
+                System.exit(0);//正常退出App
                 break;
             case R.id.tv_money:
                 textView.setVisibility(View.GONE);
