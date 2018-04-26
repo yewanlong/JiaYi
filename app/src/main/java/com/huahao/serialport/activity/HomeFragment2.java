@@ -40,7 +40,7 @@ import java.util.List;
  * Created by Lkn on 2018/1/31.
  */
 
-public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemClickListener, View.OnClickListener, CommentTypeDialog.CommentTypeClick {
     private ImageCycleView cycleView;
     private HomeTitleAdapter adapter;
     private HomeContentAdapter contentAdapter;
@@ -96,8 +96,8 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
 
     private void initCycleView(final List<LunBoList> urlList) {
         cycleView.setVisibility(View.VISIBLE);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        params.width = (int) (ScreenUtil.getInstance(getActivity()).getWidth() * 0.3);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.height = (int) (ScreenUtil.getInstance(getActivity()).getWidth() * 0.3);
         cycleView.setLayoutParams(params);
         ImageCycleView.ImageCycleViewListener mAdCycleViewListener = new ImageCycleView.ImageCycleViewListener() {
             @Override
@@ -149,14 +149,23 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
     }
 
     public void getLunbo() {
-        StringRequest request = HttpUtils.getLunbo(listener);
-        app.addRequestQueue(1002, request, this);
+        if (CommonUtils.isNetWorkConnected(getActivity())) {
+
+            StringRequest request = HttpUtils.getLunbo(listener);
+            app.addRequestQueue(1002, request, this);
+        } else {
+            VToast.showLong("网络异常");
+        }
     }
 
     public void getUdapte() {
-        VToast.showLong("版本号：" + CommonUtils.getAppVersionCode(getActivity()));
-        StringRequest request = HttpUtils.getUpdate(listener, CommonUtils.getAppVersionCode(getActivity()));
-        app.addRequestQueue(1005, request, this);
+        if (CommonUtils.isNetWorkConnected(getActivity())) {
+            VToast.showLong("版本号：" + CommonUtils.getAppVersionCode(getActivity()));
+            StringRequest request = HttpUtils.getUpdate(listener, CommonUtils.getAppVersionCode(getActivity()));
+            app.addRequestQueue(1005, request, this);
+        } else {
+            VToast.showLong("网络异常");
+        }
     }
 
     @Override
@@ -174,63 +183,77 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
     public RequestListener<String> listener = new RequestListener<String>() {
         @Override
         protected void onSuccess(int what, String response) {
-            switch (what) {
-                case 1001:
-                    HomeBean base = JSON.parseObject(response, HomeBean.class);
-                    if (base.getStatus() == HttpUtils.HTTP_STATUS) {
-                        adapter.setData(base.getLists());
-                        if (adapter.getData().size() != 0) {
-                            adapter.isTrue(0);
-                            contentAdapter.setData(base.getLists().get(0).getP_list());
-                            addPrice = 0;
-                            numberThis = 0;
-                            tv_money.setText("合计：" + addPrice + "元");
-                        } else {
-                            contentAdapter.setData(new ArrayList<HomeListData>());
+            try {
+                switch (what) {
+                    case 1001:
+                        HomeBean base = JSON.parseObject(response, HomeBean.class);
+                        if (base.getStatus() == HttpUtils.HTTP_STATUS) {
+                            adapter.setData(base.getLists());
+                            if (adapter.getData().size() != 0) {
+                                adapter.isTrue(0);
+                                contentAdapter.setData(base.getLists().get(0).getP_list());
+                                addPrice = 0;
+                                numberThis = 0;
+                                tv_money.setText("合计：" + addPrice + "元");
+                            } else {
+                                contentAdapter.setData(new ArrayList<HomeListData>());
+                            }
                         }
-                    }
-                    break;
-                case 1002:
-                    LunBoBean lunBoBean = JSON.parseObject(response, LunBoBean.class);
-                    if (lunBoBean.getStatus() == HttpUtils.HTTP_STATUS) {
-                        if (lunBoBean.getLunbo().size() != 0) {
-                            initCycleView(lunBoBean.getLunbo());
-                        } else {
-                            cycleView.setVisibility(View.GONE);
+                        break;
+                    case 1002:
+                        LunBoBean lunBoBean = JSON.parseObject(response, LunBoBean.class);
+                        if (lunBoBean.getStatus() == HttpUtils.HTTP_STATUS) {
+                            if (lunBoBean.getLunbo().size() != 0) {
+                                initCycleView(lunBoBean.getLunbo());
+                            } else {
+                                cycleView.setVisibility(View.GONE);
+                            }
                         }
-                    }
-                    break;
-                case 1003:
-                    HomeOrder homeOrder = JSON.parseObject(response, HomeOrder.class);
-                    if (homeOrder.getStatus() == HttpUtils.HTTP_STATUS) {
-                        getOrder2(homeOrder.getResult().getOid());
-                    } else {
-                        dismissProgressDialog();
-                        VToast.showLong(homeOrder.getReason());
-                    }
-                    break;
-                case 1004:
-                    OrderData orderData = JSON.parseObject(response, OrderData.class);
-                    if (orderData.getStatus() == HttpUtils.HTTP_STATUS) {
-                        dismissProgressDialog();
-                        showCommentDialog(orderData.getQr_code());
-                    } else {
-                        dismissProgressDialog();
-                        VToast.showLong(orderData.getReason());
-                    }
-                    break;
-                case 1005:
-                    UpdateApp updateApp = JSON.parseObject(response, UpdateApp.class);
-                    if (updateApp.getStatus() == HttpUtils.HTTP_STATUS) {
-                        if (!TextUtils.isEmpty(updateApp.getApk_url()) && !"".equals(updateApp.getApk_url())) {
-                            UpdateService2.Builder.create(updateApp.getApk_url())
-                                    .build(getActivity());
+                        break;
+                    case 1003:
+                        HomeOrder homeOrder = JSON.parseObject(response, HomeOrder.class);
+                        if (homeOrder.getStatus() == HttpUtils.HTTP_STATUS) {
+                            showTypeDialog(homeOrder.getResult().getOid());
+                        } else {
+                            dismissProgressDialog();
+                            VToast.showLong(homeOrder.getReason());
+                        }
+                        break;
+                    case 1004:
+                        OrderData orderData = JSON.parseObject(response, OrderData.class);
+                        if (orderData.getStatus() == HttpUtils.HTTP_STATUS) {
+                            dismissProgressDialog();
+                            showCommentDialog(orderData.getQr_code(), "请使用微信支付");
+                        } else {
+                            dismissProgressDialog();
+                            VToast.showLong(orderData.getReason());
+                        }
+                        break;
+                    case 1005:
+                        UpdateApp updateApp = JSON.parseObject(response, UpdateApp.class);
+                        if (updateApp.getStatus() == HttpUtils.HTTP_STATUS) {
+                            if (!TextUtils.isEmpty(updateApp.getApk_url()) && !"".equals(updateApp.getApk_url())) {
+                                UpdateService2.Builder.create(updateApp.getApk_url())
+                                        .build(getActivity());
 
+                            }
                         }
-                    }
-                    break;
-                default:
-                    break;
+                        break;
+                    case 1006:
+                        OrderData orderData2 = JSON.parseObject(response, OrderData.class);
+                        if (orderData2.getStatus() == HttpUtils.HTTP_STATUS) {
+                            dismissProgressDialog();
+                            showCommentDialog(orderData2.getQr_code(), "请使用支付宝支付");
+                        } else {
+                            dismissProgressDialog();
+                            VToast.showLong(orderData2.getReason());
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } catch (Exception e) {
+                VToast.showLong("JSON解析异常，请和管理员联系，错误序列号：" + what);
             }
         }
 
@@ -410,6 +433,7 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
                 break;
             case R.id.tv_next:
                 if (addPrice == 0) {
+                    showTypeDialog("sasa");
                     VToast.showLong("请选择商品");
                     return;
                 } else {
@@ -441,25 +465,43 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
     }
 
     private void getOrder() {
-        setProgressDialog("正在获取订单...");
-        String pic = "";
-        for (int i = 0; i < copyList.size(); i++) {
-            if (i == 0) {
-                pic = copyList.get(i).getPid() + ":" + copyList.get(i).getNum();
-            } else {
-                pic = pic + "," + copyList.get(i).getPid() + ":" + copyList.get(i).getNum();
+        if (CommonUtils.isNetWorkConnected(getActivity())) {
+            setProgressDialog("正在获取订单...");
+            String pic = "";
+            for (int i = 0; i < copyList.size(); i++) {
+                if (i == 0) {
+                    pic = copyList.get(i).getPid() + ":" + copyList.get(i).getNum();
+                } else {
+                    pic = pic + "," + copyList.get(i).getPid() + ":" + copyList.get(i).getNum();
+                }
             }
+            StringRequest request = HttpUtils.getOrder(listener, pic);
+            app.addRequestQueue(1003, request, this);
+        } else {
+            VToast.showLong("网络异常");
         }
-        StringRequest request = HttpUtils.getOrder(listener, pic);
-        app.addRequestQueue(1003, request, this);
     }
 
     private void getOrder2(String oid) {
-        StringRequest request = HttpUtils.getOrder2(listener, oid);
-        app.addRequestQueue(1004, request, this);
+        if (CommonUtils.isNetWorkConnected(getActivity())) {
+            StringRequest request = HttpUtils.getOrder2(listener, oid);
+            app.addRequestQueue(1004, request, this);
+        } else {
+            VToast.showLong("网络异常");
+        }
+    }
+
+    private void getOrderPay(String oid) {
+        if (CommonUtils.isNetWorkConnected(getActivity())) {
+            StringRequest request = HttpUtils.getOrderPay(listener, oid);
+            app.addRequestQueue(1006, request, this);
+        } else {
+            VToast.showLong("网络异常");
+        }
     }
 
     private CommentDialog commentDialog;
+    private CommentTypeDialog typeDialog;
 
     public void dialogDismiss() {
         if (commentDialog.isShowing()) {
@@ -467,16 +509,35 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
         }
     }
 
-    private void showCommentDialog(String url) {
+    private void showCommentDialog(String url, String type) {
         if (commentDialog == null) {
-            commentDialog = new CommentDialog(getActivity(), R.style.myDialogTheme, url);
+            commentDialog = new CommentDialog(getActivity(), R.style.myDialogTheme, url, type);
             commentDialog.setCanceledOnTouchOutside(false);
             commentDialog.show();
         } else {
-            commentDialog.setUrl(url);
+            commentDialog.setUrl(url, type);
             commentDialog.show();
         }
     }
 
+    private void showTypeDialog(String order) {
+        if (commentDialog == null) {
+            typeDialog = new CommentTypeDialog(getActivity(), R.style.myDialogTheme, this, order);
+            typeDialog.setCanceledOnTouchOutside(true);
+            typeDialog.show();
+        } else {
+            typeDialog.setId(order);
+            typeDialog.show();
+        }
+    }
 
+    @Override
+    public void wxPay(String id) {
+        getOrder2(id);
+    }
+
+    @Override
+    public void zfbPay(String id) {
+        getOrderPay(id);
+    }
 }

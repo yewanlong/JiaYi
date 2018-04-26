@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,53 +19,51 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 /**
  * Created by Lkn on 2016/7/25.
  */
-public class CommentDialog extends Dialog implements View.OnClickListener {
+public class CommentTypeDialog extends Dialog implements View.OnClickListener {
     private Context context;
-    private TextView tv_close, tv_content, tv_type;
-    private ImageView imageView;
-    private String url, type;
+    private ImageView zfbImageView, wxImageView;
     private MyCountDownTimer mc;
+    private CommentTypeClick typeClick;
+    private String id;
 
-    public CommentDialog(Context context, int theme, String url, String type) {
+    public CommentTypeDialog(Context context, int theme, CommentTypeClick typeClick, String id) {
         super(context, theme);
         this.context = context;
-        this.url = url;
-        this.type = url;
+        this.typeClick = typeClick;
+        this.id = id;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialoag_qcode);
+        setContentView(R.layout.dialoag_qcode_type);
         initManager();
         initView();
         initListener();
     }
 
     private void initView() {
-        tv_type = (TextView) findViewById(R.id.tv_type);
-        tv_close = (TextView) findViewById(R.id.tv_close);
-        tv_content = (TextView) findViewById(R.id.tv_content);
-        imageView = (ImageView) findViewById(R.id.imageView);
-        mc = new MyCountDownTimer(70000, 1000);
+        wxImageView = (ImageView) findViewById(R.id.iv_wx);
+        zfbImageView = (ImageView) findViewById(R.id.iv_zfb);
+        mc = new MyCountDownTimer(20000, 1000);
         mc.start();
-        imageView.setImageResource(R.mipmap.ic_friends_sends_pictures_no);
-        ImageLoader.getInstance().displayImage(url, imageView, OptionsUtils.
-                options(R.mipmap.ic_friends_sends_pictures_no));
-        tv_type.setText(type);
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     private void initManager() {
         WindowManager.LayoutParams params = getWindow().getAttributes(); // 获取对话框当前的参数值
-        params.width = (int) (ScreenUtil.getInstance(context).getWidth() * 0.75);
-        params.height = (int) (ScreenUtil.getInstance(context).getHeight() * 0.65);
+        params.width = (int) (ScreenUtil.getInstance(context).getWidth() * 0.55);
         params.gravity = Gravity.CENTER;
         onWindowAttributesChanged(params);
     }
 
     private void initListener() {
-        tv_close.setOnClickListener(this);
+        zfbImageView.setOnClickListener(this);
+        wxImageView.setOnClickListener(this);
     }
 
     @Override
@@ -74,30 +71,31 @@ public class CommentDialog extends Dialog implements View.OnClickListener {
         super.onStop();
     }
 
-    public void setUrl(String url, String type) {
-        tv_type.setText(type);
-        imageView.setImageResource(R.mipmap.ic_friends_sends_pictures_no);
-        ImageLoader.getInstance().displayImage(url, imageView, OptionsUtils.
-                options(R.mipmap.ic_friends_sends_pictures_no));
-        this.url = url;
-        this.type = type;
-        mc.start();
-    }
 
     @Override
     public void onClick(View v) {
         // TODO Auto-generated method stub
         switch (v.getId()) {
-            case R.id.tv_close:
+            case R.id.iv_wx:
+                typeClick.wxPay(id);
+                dismiss();
+                break;
+            case R.id.iv_zfb:
+                typeClick.zfbPay(id);
                 dismiss();
                 break;
         }
     }
 
+    public interface CommentTypeClick {
+        void wxPay(String id);
+
+        void zfbPay(String id);
+    }
+
     class MyCountDownTimer extends CountDownTimer {
         public MyCountDownTimer(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
-            tv_content.setText("70秒后自动返回");
         }
 
         public void onFinish() {
@@ -106,7 +104,6 @@ public class CommentDialog extends Dialog implements View.OnClickListener {
         }
 
         public void onTick(long millisUntilFinished) {
-            tv_content.setText((millisUntilFinished / 1000) + "秒后自动返回");
         }
     }
 }

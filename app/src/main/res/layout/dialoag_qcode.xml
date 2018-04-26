@@ -36,6 +36,7 @@
             android:src="@mipmap/ic_friends_sends_pictures_no" />
 
         <TextView
+            android:id="@+id/tv_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
