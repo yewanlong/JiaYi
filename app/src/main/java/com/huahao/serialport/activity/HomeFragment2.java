@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.huahao.serialport.HttpUtils;
@@ -47,11 +48,11 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
     private HomeOrderAdapter orderAdapter;
     private ListView listView1, listView2, listView4, orderListView;
     private double addPrice = 0;
-    private TextView tv_money, tv_next, tv_subtract, tv_order_number, textView;
+    private TextView tv_money, tv_next, tv_subtract, tv_order_number, textView, tv_connect;
     private ImageView iv_cart;
     private int numberThis = 0, titlePosition;
     private List<HomeListData> copyList = new ArrayList<>();
-    private LinearLayout layout_order;
+    private LinearLayout layout_order, layout_no_data, layout_no_next;
 
     @Override
     protected int layoutId() {
@@ -72,6 +73,9 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
         tv_subtract = $(v, R.id.tv_subtract);
         tv_order_number = $(v, R.id.tv_order_number);
         listView4 = $(v, R.id.listView4);
+        layout_no_data = $(v, R.id.layout_no_data);
+        layout_no_next = $(v, R.id.layout_no_next);
+        tv_connect = $(v, R.id.tv_connect);
     }
 
     @Override
@@ -121,6 +125,7 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
         tv_subtract.setOnClickListener(this);
         tv_money.setOnClickListener(this);
         textView.setOnClickListener(this);
+        layout_no_next.setOnClickListener(this);
         tv_money.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -195,7 +200,9 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
                                 addPrice = 0;
                                 numberThis = 0;
                                 tv_money.setText("合计：" + addPrice + "元");
+                                layout_no_data.setVisibility(View.GONE);
                             } else {
+                                layout_no_data.setVisibility(View.VISIBLE);
                                 contentAdapter.setData(new ArrayList<HomeListData>());
                             }
                         }
@@ -252,8 +259,9 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
                     default:
                         break;
                 }
+
             } catch (Exception e) {
-                VToast.showLong("JSON解析异常，请和管理员联系，错误序列号：" + what);
+                VToast.showLong("JSON错误日志：" + e.getMessage());
             }
         }
 
@@ -433,7 +441,6 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
                 break;
             case R.id.tv_next:
                 if (addPrice == 0) {
-                    showTypeDialog("sasa");
                     VToast.showLong("请选择商品");
                     return;
                 } else {
@@ -446,7 +453,21 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
             case R.id.tv_money:
                 textView.setVisibility(View.GONE);
                 break;
+            case R.id.layout_no_next:
+                tv_connect.setText("正在重连...");
+                MainActivity parentActivity = (MainActivity) getActivity();
+                parentActivity.onConnect();
+                break;
         }
+    }
+
+    public void toConnect() {
+        layout_no_next.setVisibility(View.VISIBLE);
+        tv_connect.setText("啊哦~连接失败，点我重新试试");
+    }
+
+    public void toConnect2() {
+        layout_no_next.setVisibility(View.GONE);
     }
 
     public void subtractList() {

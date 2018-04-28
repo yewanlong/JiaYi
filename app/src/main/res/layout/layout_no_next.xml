@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_no_next"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@+id/layout_card"
+    android:gravity="center"
+    android:background="@color/white"
+    android:visibility="gone"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="180dp"
+        android:layout_height="260dp"
+        android:src="@mipmap/icon_no_data" />
+
+    <TextView
+        android:id="@+id/tv_connect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="啊哦~连接失败，点我重新试试"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/font_size_18sp" />
+</LinearLayout>

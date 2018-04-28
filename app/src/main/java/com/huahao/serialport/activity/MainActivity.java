@@ -66,7 +66,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private String[] channelId = new String[0];
     private List<GoodsNotice> goodsNotices = new ArrayList<>();
     private Button button;
-//    private ArrayList<String> list = new ArrayList<>();
+    //    private ArrayList<String> list = new ArrayList<>();
     private SocketActionAdapter adapter = new SocketActionAdapter() {
 
         @Override
@@ -77,13 +77,21 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         @Override
         public void onSocketDisconnection(Context context, ConnectionInfo info, String action, Exception e) {
             if (e != null) {
+                handler.removeCallbacks(mRunnable);
                 handler.postDelayed(mRunnable, 20000);
+                if (homeFragment != null) {
+                    homeFragment.toConnect();
+                }
             }
         }
 
         @Override
         public void onSocketConnectionFailed(Context context, ConnectionInfo info, String action, Exception e) {
+            handler.removeCallbacks(mRunnable);
             handler.postDelayed(mRunnable, 20000);
+            if (homeFragment != null) {
+                homeFragment.toConnect();
+            }
         }
 
         //接收
@@ -117,7 +125,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     protected void initView() {
         app.addActivity(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
-        button = (Button) findViewById(R.id.button);
+        button = $(R.id.button);
         homeFragment = new HomeFragment();
         mSerialPortManager = new SerialPortManagerDj();
         mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);
@@ -213,7 +221,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                     } else if (channelLenght == channelId.length) {
                         dismissProgressDialog();
                         socketSend(HttpUtils.getChannelStatus(HttpUtils.IMEI, channelStr));
-                    }else {
+                    } else {
                         dismissProgressDialog();
                     }
                     break;
@@ -304,6 +312,12 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         }
     }
 
+    public void onConnect() {
+        if (mManager != null) {
+            mManager.connect();
+        }
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -342,9 +356,10 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private void initImei() {
         HttpUtils.IMEI = CommonUtils.getSubscriberId(this);
         socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
+        handler.removeCallbacks(mRunnableCSQ);
         handler.postDelayed(mRunnableCSQ, 1000);
         homeFragment.getLunbo();
-        homeFragment.initList();
+        homeFragment.toConnect2();
     }
 
     @Override

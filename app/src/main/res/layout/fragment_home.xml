@@ -18,6 +18,8 @@
         android:layout_below="@+id/cycleView"
         android:orientation="horizontal">
 
+        <include layout="@layout/layout_no_data" />
+
         <ListView
             android:id="@+id/listView1"
             android:layout_width="220dp"
@@ -38,15 +40,16 @@
 
     <TextView
         android:id="@+id/textView"
-        android:textSize="15sp"
-        android:gravity="center"
         android:layout_width="match_parent"
-        android:background="@color/colorAccent"
         android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:gravity="center"
         android:textColor="@color/white"
+        android:textSize="15sp"
         android:visibility="gone" />
 
     <include layout="@layout/include_home_order" />
+    <include layout="@layout/layout_no_next" />
 
     <LinearLayout
         android:id="@+id/layout_card"
@@ -93,5 +96,6 @@
         android:dividerHeight="1dp"
         android:scrollbars="none"
         android:visibility="gone" />
+
 
 </RelativeLayout>

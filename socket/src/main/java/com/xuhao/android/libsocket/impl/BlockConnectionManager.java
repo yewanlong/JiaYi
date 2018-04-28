@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.xuhao.android.libsocket.impl.abilities.IIOManager;
 import com.xuhao.android.libsocket.impl.blockio.IOManager;

@@ -4,14 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:layout_marginTop="40dp"
-    android:layout_marginBottom="40dp"
+    android:layout_marginTop="30dp"
+    android:layout_marginBottom="30dp"
     android:orientation="horizontal">
+    <include layout="@layout/layout_no_next" />
 
     <com.huahao.serialport.weight.ImageCycleView
         android:id="@+id/cycleView"
         android:layout_width="150dp"
         android:layout_height="match_parent" />
+    <include layout="@layout/layout_no_data" />
 
     <RelativeLayout
         android:layout_width="match_parent"

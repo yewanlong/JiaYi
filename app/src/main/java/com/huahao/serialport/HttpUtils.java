@@ -13,8 +13,8 @@ import java.util.Date;
  */
 
 public class HttpUtils {
-//    protected final static String TCP_URL = "tcp.xiayimart.com";
-        protected final static String TCP_URL = "zxy.vpandian.com";
+    protected final static String TCP_URL = "tcp.xiayimart.com";
+//        protected final static String TCP_URL = "zxy.vpandian.com";
     public final static String TCP_IP = TCP_URL;
     protected final static int TCP_PRO = 1368;
 //    protected final static int TCP_PRO = 8080;
@@ -27,8 +27,8 @@ public class HttpUtils {
 
     public final static int HTTP_STATUS = 0;
 
-//    public final static String HTTP_BASE = "https://www.xiayimart.com/api";
-    public final static String HTTP_BASE = "http://hh.vpandian.com/api";
+    public final static String HTTP_BASE = "https://www.xiayimart.com/api";
+//    public final static String HTTP_BASE = "http://hh.vpandian.com/api";
 
     public static String IMEI = "868575021770443";
 
