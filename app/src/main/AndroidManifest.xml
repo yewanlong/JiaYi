@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.huahao.serialport">
-
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
@@ -60,8 +60,7 @@
         </receiver>
 
         <activity android:name="com.huahao.serialport.SerialPortActivity" />
-        <activity android:name="com.huahao.serialport.gpio.GpioActivity1" />
-        <activity android:name="com.huahao.serialport.gpio.GpioActivity2" />
+        <service android:name="com.huahao.serialport.activity.SystemOverlayMenuService" />
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="5adee8a1b27b0a3f4c000105" />

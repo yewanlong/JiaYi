@@ -51,14 +51,19 @@ public abstract class YBaseActivity extends AppCompatActivity {
         if (isApplyEventBus()) EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
+
     public void setProgressDialog(String msg) {
-        pd.setMessage(msg);
-        pd.show();
+        if (!isFinishing()) {
+            pd.setMessage(msg);
+            pd.show();
+        }
     }
+
     public void dismissProgressDialog() {
         if (!isFinishing() && pd != null && pd.isShowing())
             pd.dismiss();
     }
+
     public boolean lacksPermissions(String... permissions) {
         for (String permission : permissions) {
             if (lacksPermission(permission)) {
@@ -67,6 +72,7 @@ public abstract class YBaseActivity extends AppCompatActivity {
         }
         return false;
     }
+
     private boolean lacksPermission(String permission) {
         return ContextCompat.checkSelfPermission(getApplicationContext(), permission) ==
                 PackageManager.PERMISSION_DENIED;
@@ -75,9 +81,11 @@ public abstract class YBaseActivity extends AppCompatActivity {
     public <T> T $(int viewId) {
         return (T) findViewById(viewId);
     }
+
     public void back(View view) {
         finish();
     }
+
     public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);

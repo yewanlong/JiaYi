@@ -6,7 +6,7 @@
     android:layout_above="@+id/layout_card"
     android:gravity="center"
     android:background="@color/white"
-    android:visibility="gone"
+    android:visibility="visible"
     android:orientation="vertical">
 
     <ImageView
