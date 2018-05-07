@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.huahao.serialport.R;
@@ -57,6 +58,7 @@ public class HomeContentAdapter extends BaseAdapter {
             holder.tv_number = (TextView) view.findViewById(R.id.tv_number);
             holder.tv_money = (TextView) view.findViewById(R.id.tv_money);
             holder.tv_add_number = (TextView) view.findViewById(R.id.tv_add_number);
+            holder.layout = (LinearLayout) view.findViewById(R.id.layout);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -70,14 +72,16 @@ public class HomeContentAdapter extends BaseAdapter {
             holder.iv_add.setImageResource(R.mipmap.icon_add_false);
         } else {
             holder.iv_add.setImageResource(R.mipmap.icon_add);
-            holder.iv_add.setTag(position);
-            holder.iv_add.setOnClickListener(listener);
         }
-        if(list.get(position).getNum() <= 0){
+        holder.iv_add.setTag(position);
+        holder.iv_add.setOnClickListener(listener);
+        holder.layout.setTag(position);
+        holder.layout.setOnClickListener(listener);
+        if (list.get(position).getNum() <= 0) {
             holder.iv_reduce.setVisibility(View.INVISIBLE);
             holder.tv_add_number.setVisibility(View.INVISIBLE);
-        }else{
-            holder.tv_add_number.setText(list.get(position).getNum()+"");
+        } else {
+            holder.tv_add_number.setText(list.get(position).getNum() + "");
             holder.tv_add_number.setVisibility(View.VISIBLE);
             holder.iv_reduce.setTag(position);
             holder.iv_reduce.setOnClickListener(listener);
@@ -87,8 +91,9 @@ public class HomeContentAdapter extends BaseAdapter {
     }
 
     public class ViewHolder {
-        TextView tv_title, tv_money, tv_number,tv_add_number;
-        ImageView imageView, iv_add,iv_reduce;
+        TextView tv_title, tv_money, tv_number, tv_add_number;
+        ImageView imageView, iv_add, iv_reduce;
+        LinearLayout layout;
     }
 
     public void setData(List<HomeListData> list) {
@@ -108,6 +113,7 @@ public class HomeContentAdapter extends BaseAdapter {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
+                case R.id.layout:
                 case R.id.iv_add:
                     addOnClick((Integer) v.getTag(), v);
                     break;
