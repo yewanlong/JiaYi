@@ -52,17 +52,17 @@ public class SystemOverlayMenuService extends Service {
         button = new Button(getApplicationContext());
         button.setText("打开");
         button.setBackgroundColor(Color.RED);
-        button.setWidth(100);
-        button.setHeight(100);
+        button.setWidth(50);
+        button.setHeight(50);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         params.type = WindowManager.LayoutParams.TYPE_PHONE;
         params.format = PixelFormat.RGBA_8888;
         params.gravity = Gravity.LEFT | Gravity.TOP;
         params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        params.width = 100;
-        params.height = 100;
-        params.x = 300;
-        params.y = 300;
+        params.width = 50;
+        params.height = 50;
+        params.x = 50;
+        params.y = 50;
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
