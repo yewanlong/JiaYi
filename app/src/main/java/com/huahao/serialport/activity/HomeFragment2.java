@@ -1,5 +1,6 @@
 package com.huahao.serialport.activity;
 
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -448,7 +449,8 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
                 }
                 break;
             case R.id.textView:
-                System.exit(0);//正常退出App
+                getActivity().startService(new Intent(getActivity(), SystemOverlayMenuService.class));
+                app.finishActivity();
                 break;
             case R.id.tv_money:
                 textView.setVisibility(View.GONE);
