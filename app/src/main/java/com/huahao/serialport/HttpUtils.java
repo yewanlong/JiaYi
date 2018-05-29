@@ -1,5 +1,9 @@
 package com.huahao.serialport;
 
+import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+
 import com.alibaba.fastjson.JSONObject;
 import com.android.volley.Request;
 import com.huahao.serialport.volley.RequestListener;
@@ -14,7 +18,7 @@ import java.util.Date;
 
 public class HttpUtils {
     protected final static String TCP_URL = "tcp.xiayimart.com";
-//        protected final static String TCP_URL = "zxy.vpandian.com";
+    //        protected final static String TCP_URL = "zxy.vpandian.com";
     public final static String TCP_IP = TCP_URL;
     protected final static int TCP_PRO = 1368;
 //    protected final static int TCP_PRO = 8080;
@@ -67,8 +71,17 @@ public class HttpUtils {
         return request;
     }
 
-    public static StringRequest getLunbo(RequestListener<String> listener) {
-        StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/lunbo.do",
+    public static StringRequest getLunbo(RequestListener<String> listener, Activity activity) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("imei", IMEI);
+        Configuration mConfiguration = activity.getResources().getConfiguration(); //获取设置的配置信息
+        int ori = mConfiguration.orientation; //获取屏幕方向
+        if (ori == mConfiguration.ORIENTATION_LANDSCAPE) {
+            jsonObject.put("orientation", "landscape");
+        } else if (ori == mConfiguration.ORIENTATION_PORTRAIT) {
+            jsonObject.put("orientation", "vertical");
+        }
+        StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/lunbo.do?",
                 listener);
         return request;
     }
@@ -90,6 +103,7 @@ public class HttpUtils {
                 listener);
         return request;
     }
+
     public static StringRequest getOrderPay(RequestListener<String> listener, String pids) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("oid", pids);

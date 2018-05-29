@@ -157,7 +157,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
     public void getLunbo() {
         if (CommonUtils.isNetWorkConnected(getActivity())) {
 
-            StringRequest request = HttpUtils.getLunbo(listener);
+            StringRequest request = HttpUtils.getLunbo(listener,getActivity());
             app.addRequestQueue(1002, request, this);
         } else {
             VToast.showLong("网络异常");
