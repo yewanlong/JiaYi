@@ -156,8 +156,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
 
     public void getLunbo() {
         if (CommonUtils.isNetWorkConnected(getActivity())) {
-
-            StringRequest request = HttpUtils.getLunbo(listener,getActivity());
+            StringRequest request = HttpUtils.getLunbo(listener, getActivity());
             app.addRequestQueue(1002, request, this);
         } else {
             VToast.showLong("网络异常");
@@ -197,7 +196,9 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
                             adapter.setData(base.getLists());
                             if (adapter.getData().size() != 0) {
                                 adapter.isTrue(0);
-                                contentAdapter.setData(base.getLists().get(0).getP_list());
+                                if (base.getLists().size() != 0) {
+                                    contentAdapter.setData(base.getLists().get(0).getP_list());
+                                }
                                 addPrice = 0;
                                 numberThis = 0;
                                 tv_money.setText("合计：" + addPrice + "元");
@@ -449,7 +450,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
                 }
                 break;
             case R.id.textView:
-                getActivity().startService(new Intent(getActivity(),SystemOverlayMenuService.class));
+                getActivity().startService(new Intent(getActivity(), SystemOverlayMenuService.class));
                 app.finishActivity();
                 break;
             case R.id.tv_money:

@@ -81,7 +81,7 @@ public class HttpUtils {
         } else if (ori == mConfiguration.ORIENTATION_PORTRAIT) {
             jsonObject.put("orientation", "vertical");
         }
-        StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/lunbo.do?",
+        StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/lunbo.do?pjson="+jsonObject.toString(),
                 listener);
         return request;
     }

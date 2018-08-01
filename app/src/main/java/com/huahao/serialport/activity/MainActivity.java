@@ -148,6 +148,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private Runnable mRunnableSub = new Runnable() {
         @Override
         public void run() {
+            dismissProgressDialog();
             homeFragment.subtractList();
         }
     };
@@ -204,15 +205,18 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         }
         statusStr = statusStr + Tool.bytesToHexString(bytes);
         if (statusStr.length() == 40) {
-            Log.i("ywl", "switchReceived:" + statusStr);
+//            Log.i("ywl", "switchReceived:" + statusStr);
 //            list.add("接收：" + statusStr);
             switch (statusStr.substring(2, 4)) {
                 case "0" + HttpUtils.SERIAL_TYPE_4: {
                     if (statusStr.contains("AA")) {
+                        VToast.showShort(channelId[channelLenght] + "号正常");
                         setChannelStr("0");
                     } else if (statusStr.contains("BB")) {
+                        VToast.showShort(channelId[channelLenght] + "号异常");
                         setChannelStr("1");
                     } else {
+                        VToast.showShort(channelId[channelLenght] + "号异常");
                         setChannelStr("2");
                     }
                     channelLenght++;
@@ -360,6 +364,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         handler.postDelayed(mRunnableCSQ, 1000);
         homeFragment.getLunbo();
         homeFragment.toConnect2();
+        homeFragment.getUdapte();
     }
 
     @Override
@@ -444,6 +449,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 homeFragment.initList();
                 break;
             case "ChannelStatus":
+                handler.postDelayed(mRunnableSub, 70000);
                 setProgressDialog("正在检查电机是否正常,请稍后...");
                 channelStr = "";
                 channelLenght = 0;
