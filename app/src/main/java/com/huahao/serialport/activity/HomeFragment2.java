@@ -101,8 +101,8 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
 
     private void initCycleView(final List<LunBoList> urlList) {
         cycleView.setVisibility(View.VISIBLE);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.height = (int) (ScreenUtil.getInstance(getActivity()).getWidth() * 0.3);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        params.width = (int) (ScreenUtil.getInstance(getActivity()).getWidth() * 0.35);
         cycleView.setLayoutParams(params);
         ImageCycleView.ImageCycleViewListener mAdCycleViewListener = new ImageCycleView.ImageCycleViewListener() {
             @Override
@@ -156,7 +156,6 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
 
     public void getLunbo() {
         if (CommonUtils.isNetWorkConnected(getActivity())) {
-
             StringRequest request = HttpUtils.getLunbo(listener, getActivity());
             app.addRequestQueue(1002, request, this);
         } else {
@@ -166,7 +165,6 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
 
     public void getUdapte() {
         if (CommonUtils.isNetWorkConnected(getActivity())) {
-            VToast.showLong("版本号：" + CommonUtils.getAppVersionCode(getActivity()));
             StringRequest request = HttpUtils.getUpdate(listener, CommonUtils.getAppVersionCode(getActivity()));
             app.addRequestQueue(1005, request, this);
         } else {
@@ -197,14 +195,16 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
                             adapter.setData(base.getLists());
                             if (adapter.getData().size() != 0) {
                                 adapter.isTrue(0);
-                                contentAdapter.setData(base.getLists().get(0).getP_list());
+                                if (base.getLists().size() != 0) {
+                                    contentAdapter.setData(base.getLists().get(0).getP_list());
+                                }
                                 addPrice = 0;
                                 numberThis = 0;
                                 tv_money.setText("合计：" + addPrice + "元");
                                 layout_no_data.setVisibility(View.GONE);
                             } else {
                                 layout_no_data.setVisibility(View.VISIBLE);
-                                contentAdapter.setData(new ArrayList<HomeListData>());
+//                                contentAdapter.setData(new ArrayList<HomeListData>());
                             }
                         }
                         break;

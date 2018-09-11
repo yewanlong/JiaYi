@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:layout_marginTop="30dp"
     android:layout_marginBottom="30dp"
+    android:layout_marginTop="30dp"
+    android:background="@color/white"
     android:orientation="horizontal">
-    <include layout="@layout/layout_no_next" />
+
 
     <com.huahao.serialport.weight.ImageCycleView
         android:id="@+id/cycleView"
         android:layout_width="150dp"
         android:layout_height="match_parent" />
-    <include layout="@layout/layout_no_data" />
+
+    <include layout="@layout/layout_no_next2" />
+
+    <include layout="@layout/layout_no_data2" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/cycleView">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="80dp"
             android:orientation="horizontal">
 
             <ListView
@@ -101,4 +106,4 @@
             android:visibility="gone" />
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

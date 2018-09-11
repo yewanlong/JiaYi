@@ -34,16 +34,16 @@ public class HttpUtils {
     public final static String HTTP_BASE = "https://www.xiayimart.com/api";
 //    public final static String HTTP_BASE = "http://hh.vpandian.com/api";
 
-    public static String IMEI = "868575021770443";
+    public static String IMEI = "服务器连接失败，获取IMEI错误";
 
     public static String getCheckIn(long msgId, String imei) {
         return "Action=CheckIn&Imei=" + imei + "&MsgId=" + msgId + "&Timer="
                 + new Date().getTime() + "&devicefrom=2";
     }
 
-    public static String getCSQ(long msgId, String imei) {
+    public static String getCSQ(long msgId, String imei,int bmd) {
         return "Action=CSQ&Imei=" + imei + "&MsgId=" + msgId + "&Timer="
-                + new Date().getTime();
+                + new Date().getTime()+"&Dbm="+bmd;
     }
 
     public static String getDelive(String imei, int Result, int ChannelIndex, String SaleId, int AlarmCode) {

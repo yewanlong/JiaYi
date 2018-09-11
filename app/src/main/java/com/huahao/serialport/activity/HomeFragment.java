@@ -165,7 +165,6 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
 
     public void getUdapte() {
         if (CommonUtils.isNetWorkConnected(getActivity())) {
-            VToast.showLong("版本号：" + CommonUtils.getAppVersionCode(getActivity()));
             StringRequest request = HttpUtils.getUpdate(listener, CommonUtils.getAppVersionCode(getActivity()));
             app.addRequestQueue(1005, request, this);
         } else {
@@ -205,7 +204,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
                                 layout_no_data.setVisibility(View.GONE);
                             } else {
                                 layout_no_data.setVisibility(View.VISIBLE);
-                                contentAdapter.setData(new ArrayList<HomeListData>());
+//                                contentAdapter.setData(new ArrayList<HomeListData>());
                             }
                         }
                         break;

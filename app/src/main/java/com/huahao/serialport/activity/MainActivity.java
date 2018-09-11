@@ -66,6 +66,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private String[] channelId = new String[0];
     private List<GoodsNotice> goodsNotices = new ArrayList<>();
     private Button button;
+    private int mobileDbm;
     //    private ArrayList<String> list = new ArrayList<>();
     private SocketActionAdapter adapter = new SocketActionAdapter() {
 
@@ -156,7 +157,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private Runnable mRunnableCSQ = new Runnable() {
         @Override
         public void run() {
-            socketSend(HttpUtils.getCSQ(msgId, HttpUtils.IMEI));
+            socketSend(HttpUtils.getCSQ(msgId, HttpUtils.IMEI,mobileDbm));
             msgId++;
             handler.postDelayed(mRunnableCSQ, 300000);
         }
@@ -358,6 +359,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     }
 
     private void initImei() {
+        mobileDbm = CommonUtils.getMobileDbm(this);
         HttpUtils.IMEI = CommonUtils.getSubscriberId(this);
         socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
         handler.removeCallbacks(mRunnableCSQ);
@@ -460,7 +462,8 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     }
 
     static final String[] SELFPERMISSIONS = new String[]{
-            Manifest.permission.READ_PHONE_STATE
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
     @Subscribe
@@ -493,4 +496,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
                 break;
         }
     }
+
+
 }
