@@ -31,7 +31,7 @@ public class CommentDialog extends Dialog implements View.OnClickListener {
         super(context, theme);
         this.context = context;
         this.url = url;
-        this.type = url;
+        this.type = type;
     }
 
     @Override
