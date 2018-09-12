@@ -221,6 +221,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
                     case 1003:
                         HomeOrder homeOrder = JSON.parseObject(response, HomeOrder.class);
                         if (homeOrder.getStatus() == HttpUtils.HTTP_STATUS) {
+                            dismissProgressDialog();
                             showTypeDialog(homeOrder.getResult().getOid());
                         } else {
                             dismissProgressDialog();
