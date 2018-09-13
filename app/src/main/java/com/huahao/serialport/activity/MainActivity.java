@@ -157,7 +157,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private Runnable mRunnableCSQ = new Runnable() {
         @Override
         public void run() {
-            socketSend(HttpUtils.getCSQ(msgId, HttpUtils.IMEI,mobileDbm));
+            socketSend(HttpUtils.getCSQ(msgId, HttpUtils.IMEI, mobileDbm));
             msgId++;
             handler.postDelayed(mRunnableCSQ, 300000);
         }
@@ -361,6 +361,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private void initImei() {
         mobileDbm = CommonUtils.getMobileDbm(this);
         HttpUtils.IMEI = CommonUtils.getSubscriberId(this);
+        HttpUtils.IMEI = HttpUtils.IMEI.replace(":", "");
         socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
         handler.removeCallbacks(mRunnableCSQ);
         handler.postDelayed(mRunnableCSQ, 1000);

@@ -165,7 +165,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
 
     public void getUdapte() {
         if (CommonUtils.isNetWorkConnected(getActivity())) {
-            StringRequest request = HttpUtils.getUpdate(listener, CommonUtils.getAppVersionCode(getActivity()));
+            StringRequest request = HttpUtils.getUpdate(listener, CommonUtils.getAppVersionCode(getActivity()),getActivity());
             app.addRequestQueue(1005, request, this);
         } else {
             VToast.showLong("网络异常");

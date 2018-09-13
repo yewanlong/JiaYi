@@ -63,9 +63,16 @@ public class HttpUtils {
         return request;
     }
 
-    public static StringRequest getUpdate(RequestListener<String> listener, int code) {
+    public static StringRequest getUpdate(RequestListener<String> listener, int code, Activity activity) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("version", code);
+        Configuration mConfiguration = activity.getResources().getConfiguration(); //获取设置的配置信息
+        int ori = mConfiguration.orientation; //获取屏幕方向
+        if (ori == mConfiguration.ORIENTATION_LANDSCAPE) {
+            jsonObject.put("orientation", "landscape");
+        } else if (ori == mConfiguration.ORIENTATION_PORTRAIT) {
+            jsonObject.put("orientation", "vertical");
+        }
         StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/updateApp.do?pjson=" + jsonObject.toString(),
                 listener);
         return request;
