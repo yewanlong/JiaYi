@@ -1,1 +1,1 @@
-include ':app', ':SerialPortLibrary',':socket'
+include ':app', ':SerialPortLibrary',':socket', ':mnvideoplayerlibrary'

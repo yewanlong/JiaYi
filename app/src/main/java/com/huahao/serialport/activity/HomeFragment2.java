@@ -18,6 +18,7 @@ import com.huahao.serialport.R;
 import com.huahao.serialport.adapter.HomeContentAdapter;
 import com.huahao.serialport.adapter.HomeOrderAdapter;
 import com.huahao.serialport.adapter.HomeTitleAdapter;
+import com.huahao.serialport.bean.Ads;
 import com.huahao.serialport.bean.HomeBean;
 import com.huahao.serialport.bean.HomeListData;
 import com.huahao.serialport.bean.HomeOrder;
@@ -54,6 +55,7 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
     private int numberThis = 0, titlePosition;
     private List<HomeListData> copyList = new ArrayList<>();
     private LinearLayout layout_order, layout_no_data, layout_no_next;
+    public List<Ads.Res> adsList = new ArrayList<>();
 
     @Override
     protected int layoutId() {
@@ -165,7 +167,7 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
 
     public void getUdapte() {
         if (CommonUtils.isNetWorkConnected(getActivity())) {
-            StringRequest request = HttpUtils.getUpdate(listener, CommonUtils.getAppVersionCode(getActivity()),getActivity());
+            StringRequest request = HttpUtils.getUpdate(listener, CommonUtils.getAppVersionCode(getActivity()), getActivity());
             app.addRequestQueue(1005, request, this);
         } else {
             VToast.showLong("网络异常");
@@ -256,6 +258,18 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
                         } else {
                             dismissProgressDialog();
                             VToast.showLong(orderData2.getReason());
+                        }
+                        break;
+                    case 1007:
+                        Ads ads = JSON.parseObject(response, Ads.class);
+                        if (ads.getStatus() == HttpUtils.HTTP_STATUS) {
+                            adsList.clear();
+                            for (int i = 0; i < ads.getRes().size(); i++) {
+                                if ("video".equals(ads.getRes().get(i).getAtype())) {
+                                    adsList.add(ads.getRes().get(i));
+                                }
+                            }
+                            ((MainActivity) getActivity()).createVoide();
                         }
                         break;
                     default:
@@ -471,6 +485,15 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
 
     public void toConnect2() {
         layout_no_next.setVisibility(View.GONE);
+    }
+
+    public void getAds() {
+        if (CommonUtils.isNetWorkConnected(getActivity())) {
+            StringRequest request = HttpUtils.getAds(listener, getActivity());
+            app.addRequestQueue(1007, request, this);
+        } else {
+            VToast.showLong("网络异常");
+        }
     }
 
     public void subtractList() {

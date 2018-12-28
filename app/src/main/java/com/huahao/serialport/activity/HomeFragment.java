@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.huahao.serialport.HttpUtils;
@@ -18,6 +17,7 @@ import com.huahao.serialport.R;
 import com.huahao.serialport.adapter.HomeContentAdapter;
 import com.huahao.serialport.adapter.HomeOrderAdapter;
 import com.huahao.serialport.adapter.HomeTitleAdapter;
+import com.huahao.serialport.bean.Ads;
 import com.huahao.serialport.bean.HomeBean;
 import com.huahao.serialport.bean.HomeListData;
 import com.huahao.serialport.bean.HomeOrder;
@@ -54,6 +54,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
     private int numberThis = 0, titlePosition;
     private List<HomeListData> copyList = new ArrayList<>();
     private LinearLayout layout_order, layout_no_data, layout_no_next;
+    public List<Ads.Res> adsList = new ArrayList<>();
 
     @Override
     protected int layoutId() {
@@ -87,7 +88,6 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
         listView1.setAdapter(adapter);
         listView2.setAdapter(contentAdapter);
         orderListView.setAdapter(orderAdapter);
-        getUdapte();
     }
 
     public void initLog() {
@@ -163,9 +163,18 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
         }
     }
 
+    public void getAds() {
+        if (CommonUtils.isNetWorkConnected(getActivity())) {
+            StringRequest request = HttpUtils.getAds(listener, getActivity());
+            app.addRequestQueue(1007, request, this);
+        } else {
+            VToast.showLong("网络异常");
+        }
+    }
+
     public void getUdapte() {
         if (CommonUtils.isNetWorkConnected(getActivity())) {
-            StringRequest request = HttpUtils.getUpdate(listener, CommonUtils.getAppVersionCode(getActivity()),getActivity());
+            StringRequest request = HttpUtils.getUpdate(listener, CommonUtils.getAppVersionCode(getActivity()), getActivity());
             app.addRequestQueue(1005, request, this);
         } else {
             VToast.showLong("网络异常");
@@ -258,11 +267,24 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemClic
                             VToast.showLong(orderData2.getReason());
                         }
                         break;
+                    case 1007:
+                        Ads ads = JSON.parseObject(response, Ads.class);
+                        if (ads.getStatus() == HttpUtils.HTTP_STATUS) {
+                            adsList.clear();
+                            for (int i = 0; i < ads.getRes().size(); i++) {
+                                if ("video".equals(ads.getRes().get(i).getAtype())) {
+                                    adsList.add(ads.getRes().get(i));
+                                }
+                            }
+                            ((MainActivity) getActivity()).createVoide();
+                        }
+                        break;
                     default:
                         break;
                 }
 
             } catch (Exception e) {
+                e.printStackTrace();
                 VToast.showLong("JSON错误日志：" + e.getMessage());
             }
         }

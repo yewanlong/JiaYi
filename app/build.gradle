@@ -6,8 +6,8 @@ android {
         applicationId "com.huahao.serialport"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 6
-        versionName "4.2"
+        versionCode 7
+        versionName "4.2.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -40,6 +40,8 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     testCompile 'junit:junit:4.12'
     compile 'com.umeng.analytics:analytics:latest.integration'
+    compile project(':mnvideoplayerlibrary')
+
 //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
 //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 }

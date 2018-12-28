@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPlayerTrans">
+
+
+        <LinearLayout
+            android:id="@+id/mn_player_surface_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="@color/colorPlayerTrans"
+            android:gravity="center">
+
+            <SurfaceView
+                android:id="@+id/mn_palyer_surfaceView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+        </LinearLayout>
+
+
+
+
+</RelativeLayout>

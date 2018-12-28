@@ -3,9 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndroidSerialPort.iml" filepath="$PROJECT_DIR$/AndroidSerialPort.iml" />
-      <module fileurl="file://D:\Android\AndroidSerialPort\JiaYi.iml" filepath="D:\Android\AndroidSerialPort\JiaYi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JiaYi.iml" filepath="$PROJECT_DIR$/JiaYi.iml" />
       <module fileurl="file://$PROJECT_DIR$/SerialPortLibrary/SerialPortLibrary.iml" filepath="$PROJECT_DIR$/SerialPortLibrary/SerialPortLibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mnvideoplayerlibrary/mnvideoplayerlibrary.iml" filepath="$PROJECT_DIR$/mnvideoplayerlibrary/mnvideoplayerlibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/socket/socket.iml" filepath="$PROJECT_DIR$/socket/socket.iml" />
     </modules>
   </component>

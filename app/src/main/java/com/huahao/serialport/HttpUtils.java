@@ -68,9 +68,9 @@ public class HttpUtils {
         jsonObject.put("version", code);
         Configuration mConfiguration = activity.getResources().getConfiguration(); //获取设置的配置信息
         int ori = mConfiguration.orientation; //获取屏幕方向
-        if (ori == mConfiguration.ORIENTATION_LANDSCAPE) {
+        if (ori == Configuration.ORIENTATION_LANDSCAPE) {
             jsonObject.put("orientation", "landscape");
-        } else if (ori == mConfiguration.ORIENTATION_PORTRAIT) {
+        } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
             jsonObject.put("orientation", "vertical");
         }
         StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/updateApp.do?pjson=" + jsonObject.toString(),
@@ -83,16 +83,29 @@ public class HttpUtils {
         jsonObject.put("imei", IMEI);
         Configuration mConfiguration = activity.getResources().getConfiguration(); //获取设置的配置信息
         int ori = mConfiguration.orientation; //获取屏幕方向
-        if (ori == mConfiguration.ORIENTATION_LANDSCAPE) {
+        if (ori == Configuration.ORIENTATION_LANDSCAPE) {
             jsonObject.put("orientation", "landscape");
-        } else if (ori == mConfiguration.ORIENTATION_PORTRAIT) {
+        } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
             jsonObject.put("orientation", "vertical");
         }
         StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/lunbo.do?pjson="+jsonObject.toString(),
                 listener);
         return request;
     }
-
+    public static StringRequest getAds(RequestListener<String> listener, Activity activity) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("imei", IMEI);
+        Configuration mConfiguration = activity.getResources().getConfiguration(); //获取设置的配置信息
+        int ori = mConfiguration.orientation; //获取屏幕方向
+        if (ori == Configuration.ORIENTATION_LANDSCAPE) {
+            jsonObject.put("orientation", "landscape");
+        } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
+            jsonObject.put("orientation", "vertical");
+        }
+        StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/ads.do?pjson="+jsonObject.toString(),
+                listener);
+        return request;
+    }
     public static StringRequest getOrder(RequestListener<String> listener, String pids) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("imei", IMEI);

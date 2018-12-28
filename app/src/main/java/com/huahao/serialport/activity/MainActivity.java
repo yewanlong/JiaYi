@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -15,21 +16,28 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huahao.serialport.HttpUtils;
 import com.huahao.serialport.NoneReconnect;
 import com.huahao.serialport.R;
 import com.huahao.serialport.bean.EventApk;
+import com.huahao.serialport.bean.EventMp4;
 import com.huahao.serialport.bean.GoodsNotice;
 import com.huahao.serialport.bean.HandShake;
 import com.huahao.serialport.utils.CommonUtils;
+import com.huahao.serialport.utils.DataCleanManager;
 import com.huahao.serialport.utils.SilentInstall;
 import com.huahao.serialport.utils.VToast;
 import com.kongqw.serialportlibrary.SerialPortManagerDj;
 import com.kongqw.serialportlibrary.Tool;
 import com.kongqw.serialportlibrary.listener.OnOpenSerialPortListener;
 import com.kongqw.serialportlibrary.listener.OnSerialPortDataListener;
+import com.maning.mnvideoplayerlibrary.listener.OnCompletionListener;
+import com.maning.mnvideoplayerlibrary.listener.OnScreenOrientationListener;
+import com.maning.mnvideoplayerlibrary.player.MNViderPlayer;
 import com.xuhao.android.libsocket.sdk.ConnectionInfo;
 import com.xuhao.android.libsocket.sdk.OkSocketOptions;
 import com.xuhao.android.libsocket.sdk.SocketActionAdapter;
@@ -54,7 +62,7 @@ import static com.xuhao.android.libsocket.sdk.OkSocket.open;
  */
 
 public class MainActivity extends YBaseActivity implements View.OnClickListener, OnOpenSerialPortListener {
-    private HomeFragment homeFragment;
+    private HomeFragment2 homeFragment;
     private SerialPortManagerDj mSerialPortManager;
     private IConnectionManager mManager;
     private ConnectionInfo mInfo;
@@ -67,6 +75,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     private List<GoodsNotice> goodsNotices = new ArrayList<>();
     private Button button;
     private int mobileDbm;
+    private LinearLayout fragment_container;
     //    private ArrayList<String> list = new ArrayList<>();
     private SocketActionAdapter adapter = new SocketActionAdapter() {
 
@@ -116,6 +125,8 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
             super.onPulseSend(context, info, data);
         }
     };
+    private MNViderPlayer mnViderPlayer;
+    private String mp4Url;
 
     @Override
     protected int getContentView() {
@@ -127,7 +138,8 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         app.addActivity(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         button = $(R.id.button);
-        homeFragment = new HomeFragment();
+        fragment_container = $(R.id.fragment_container);
+        homeFragment = new HomeFragment2();
         mSerialPortManager = new SerialPortManagerDj();
         mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);
         mOkOptions = new OkSocketOptions.Builder(OkSocketOptions.getDefault())
@@ -137,6 +149,10 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         mManager = open(mInfo, mOkOptions);
         mManager.registerReceiver(adapter);
         mManager.connect();
+//        DataCleanManager.cleanInternalCache(this);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
+
+
     }
 
     private Runnable mRunnable = new Runnable() {
@@ -150,9 +166,19 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         @Override
         public void run() {
             dismissProgressDialog();
-            homeFragment.subtractList();
+            if (homeFragment != null) {
+                homeFragment.subtractList();
+                if (homeFragment.adsList.size() != 0 && mp4Url != null) {
+                    getImages();
+                }
+            }
         }
     };
+
+    private void getImages() {
+        fragment_container.setVisibility(View.GONE);
+        mnViderPlayer.startVideo();
+    }
 
     private Runnable mRunnableCSQ = new Runnable() {
         @Override
@@ -206,8 +232,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         }
         statusStr = statusStr + Tool.bytesToHexString(bytes);
         if (statusStr.length() == 40) {
-//            Log.i("ywl", "switchReceived:" + statusStr);
-//            list.add("接收：" + statusStr);
             switch (statusStr.substring(2, 4)) {
                 case "0" + HttpUtils.SERIAL_TYPE_4: {
                     if (statusStr.contains("AA")) {
@@ -327,11 +351,12 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button:
+                mnViderPlayer.playVideo(mp4Url);
                 if (button.getText().toString().equals("查看log")) {
 //                    homeFragment.initLog(list);
                     button.setText("关闭");
                 } else {
-                    homeFragment.initLog();
+//                    homeFragment.initLog();
                     button.setText("查看log");
                 }
                 break;
@@ -366,6 +391,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         handler.removeCallbacks(mRunnableCSQ);
         handler.postDelayed(mRunnableCSQ, 1000);
         homeFragment.getLunbo();
+        homeFragment.getAds();
         homeFragment.toConnect2();
         homeFragment.getUdapte();
     }
@@ -386,6 +412,10 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     @Override
     protected void onDestroy() {
+        if (mnViderPlayer != null) {
+            mnViderPlayer.destroyVideo();
+        }
+        position = 0;
         mSerialPortManager.closeSerialPort();
         mManager.disConnect();
         handler.removeCallbacks(mRunnableCSQ);
@@ -483,6 +513,13 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         }
     }
 
+    @Subscribe
+    public void onEventMainThread(EventMp4 event) {
+        initPlayer(event.getPath());
+        position = 1;
+        createVoide();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
@@ -498,5 +535,41 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         }
     }
 
+    private void initPlayer(String url) {
+        mp4Url = url;
+        if (mnViderPlayer != null)
+            return;
+        //初始化相关参数(必须放在Play前面)
+        mnViderPlayer = (MNViderPlayer) findViewById(R.id.mn_videoplayer);
+        mnViderPlayer.setWidthAndHeightProportion(16, 9);   //设置宽高比
+        //第一次进来先设置数据
+        mnViderPlayer.setDataSource(url);
+
+        //播放完成监听
+        mnViderPlayer.setOnCompletionListener(new OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mnViderPlayer.getMediaPlayer().start();
+                mnViderPlayer.getMediaPlayer().setLooping(true);
+            }
+        });
+
+        mnViderPlayer.setOnScreenOrientationListener(new OnScreenOrientationListener() {
+            @Override
+            public void onClickVideo() {
+                fragment_container.setVisibility(View.VISIBLE);
+            }
+        });
+
+    }
+
+    private int position;
+
+    public void createVoide() {
+        if (homeFragment.adsList.size() != 0 && homeFragment.adsList.size() > position) {
+            UpdateService.Builder.create(homeFragment.adsList.get(position).getImages())
+                    .build(this);
+        }
+    }
 
 }

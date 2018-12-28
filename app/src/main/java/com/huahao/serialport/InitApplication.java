@@ -30,14 +30,10 @@ public class InitApplication extends Application {
         applicationContext = this;
         instance = this;
         super.onCreate();
-//        if (LeakCanary.isInAnalyzerProcess(this)) {
-//            return;
-//        }
-//        LeakCanary.install(this);
         OkSocket.initialize(this, true);
         ImageLoaderUtil.initImageLoaderConfig(applicationContext);
-//        UnCeHandler catchExcep = new UnCeHandler(this);
-//        Thread.setDefaultUncaughtExceptionHandler(catchExcep);
+        UnCeHandler catchExcep = new UnCeHandler(this);
+        Thread.setDefaultUncaughtExceptionHandler(catchExcep);
     }
 
     public static InitApplication getInstance() {
