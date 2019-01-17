@@ -184,13 +184,14 @@ public class MNViderPlayer extends FrameLayout implements
         myHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                try {
-                    mediaPlayer.setDataSource(videoPath);
-                    // 准备开始,异步准备，自动在子线程中
-                    mediaPlayer.prepareAsync();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                if (videoPath != null)
+                    try {
+                        mediaPlayer.setDataSource(videoPath);
+                        // 准备开始,异步准备，自动在子线程中
+                        mediaPlayer.prepareAsync();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
             }
         }, 1200);
         //添加播放路径
