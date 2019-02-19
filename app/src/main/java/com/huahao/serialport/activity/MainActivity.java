@@ -62,7 +62,7 @@ import static com.xuhao.android.libsocket.sdk.OkSocket.open;
  */
 
 public class MainActivity extends YBaseActivity implements View.OnClickListener, OnOpenSerialPortListener {
-    private HomeFragment homeFragment;
+    private HomeFragment2 homeFragment;
     private SerialPortManagerDj mSerialPortManager;
     private IConnectionManager mManager;
     private ConnectionInfo mInfo;
@@ -139,7 +139,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏的flag
         button = $(R.id.button);
         fragment_container = $(R.id.fragment_container);
-        homeFragment = new HomeFragment();
+        homeFragment = new HomeFragment2();
         mSerialPortManager = new SerialPortManagerDj();
         mInfo = new ConnectionInfo(HttpUtils.TCP_IP, HttpUtils.TCP_PRO_IP);
         mOkOptions = new OkSocketOptions.Builder(OkSocketOptions.getDefault())
@@ -177,7 +177,7 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
     private void getImages() {
         fragment_container.setVisibility(View.GONE);
-        mnViderPlayer.startVideo();
+        mnViderPlayer.playVideo(mp4Url);
     }
 
     private Runnable mRunnableCSQ = new Runnable() {
@@ -212,7 +212,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
 
                     @Override
                     public void onDataSent(final byte[] bytes) {
-                        Log.i("ywl", "onDataSent:" + Tool.bytesToHexString(bytes));
 //                        list.add("发送：" + Tool.bytesToHexString(bytes));
                     }
                 }).openSerialPort(new File("/dev/ttyS3"), 9600);
@@ -351,7 +350,6 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button:
-                mnViderPlayer.playVideo(mp4Url);
                 if (button.getText().toString().equals("查看log")) {
 //                    homeFragment.initLog(list);
                     button.setText("关闭");
@@ -384,9 +382,9 @@ public class MainActivity extends YBaseActivity implements View.OnClickListener,
     }
 
     private void initImei() {
-        mobileDbm = CommonUtils.getMobileDbm(this);
         HttpUtils.IMEI = CommonUtils.getSubscriberId(this);
         HttpUtils.IMEI = HttpUtils.IMEI.replace(":", "");
+        mobileDbm = CommonUtils.getMobileDbm(this);
         socketSend(HttpUtils.getCheckIn(0, HttpUtils.IMEI));
         handler.removeCallbacks(mRunnableCSQ);
         handler.postDelayed(mRunnableCSQ, 1000);

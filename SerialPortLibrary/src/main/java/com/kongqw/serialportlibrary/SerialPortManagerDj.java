@@ -150,7 +150,6 @@ public class SerialPortManagerDj extends SerialPort {
             }
             case Tool.SERIAL_TYPE_WHAT_5: {
                 int number = map.get(Tool.MOTOR_NUMBER);
-                Log.i("ywl", "number:" + number);
                 data = new byte[]{(byte) 1, (byte) type, (byte) number, (byte) 3, (byte) 0, (byte) 0, (byte) 0,
                         (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
                 break;

@@ -2,6 +2,7 @@ package com.huahao.serialport.activity;
 
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -89,7 +90,6 @@ public class HomeFragment2 extends BaseFragment implements AdapterView.OnItemCli
         listView1.setAdapter(adapter);
         listView2.setAdapter(contentAdapter);
         orderListView.setAdapter(orderAdapter);
-        getUdapte();
     }
 
     public void initLog() {

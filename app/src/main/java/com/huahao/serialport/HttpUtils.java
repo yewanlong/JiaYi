@@ -73,6 +73,7 @@ public class HttpUtils {
         } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
             jsonObject.put("orientation", "vertical");
         }
+        jsonObject.put("imei", IMEI);
         StringRequest request = new StringRequest(Request.Method.GET, HttpUtils.HTTP_BASE + "/updateApp.do?pjson=" + jsonObject.toString(),
                 listener);
         return request;
